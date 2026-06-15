@@ -167,7 +167,10 @@ export async function createCheckoutOrder(
         if (coupon.usageLimit) {
           const claimed = await transaction.coupon.updateMany({
             where: { id: coupon.id, active: true, usageCount: { lt: coupon.usageLimit } },
-            data: { usageCount: { increment: 1 } },
+            data: {
+              usageCount: { increment: 1 },
+              ...(coupon.usageLimit === 1 ? { active: false } : {}),
+            },
           });
           if (!claimed.count) throw new Error("COUPON_EXHAUSTED");
         } else {
@@ -254,7 +257,10 @@ export async function createCheckoutOrder(
         if (coupon) {
           await transaction.coupon.updateMany({
             where: { id: coupon.id, usageCount: { gt: 0 } },
-            data: { usageCount: { decrement: 1 } },
+            data: {
+              usageCount: { decrement: 1 },
+              ...(coupon.usageLimit === 1 ? { active: true } : {}),
+            },
           });
         }
       }).catch(() => undefined);

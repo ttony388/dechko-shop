@@ -6,6 +6,7 @@ import { POST as resend } from "../src/app/api/auth/resend-verification/route";
 import { createCheckoutOrder } from "../src/lib/checkout";
 import { authenticateCredentials } from "../src/lib/authenticate";
 import { getCatalogPage } from "../src/lib/catalog";
+import { createRandomCouponCode } from "../src/lib/coupon-code";
 import { db } from "../src/lib/db";
 import { createVerificationToken, verifyEmailToken } from "../src/lib/email-verification";
 
@@ -23,6 +24,10 @@ const orderIds: string[] = [];
 const couponIds: string[] = [];
 
 async function main() {
+  const randomCouponCode = createRandomCouponCode();
+  assert.match(randomCouponCode, /^[A-Z0-9]{8}$/);
+  assert.match(randomCouponCode, /[A-Z]/);
+  assert.match(randomCouponCode, /[0-9]/);
   const registration = await register(new Request("http://localhost/api/auth/register", {
     method: "POST",
     body: JSON.stringify({ name: "Smoke Test", email, password }),
@@ -290,7 +295,9 @@ async function main() {
   });
   orderIds.push(couponOrder.id);
   assert.equal(Number(couponOrder.discount.toFixed(2)), 2);
-  assert.equal((await db.coupon.findUniqueOrThrow({ where: { id: assignedCoupon.id } })).usageCount, 1);
+  const usedCoupon = await db.coupon.findUniqueOrThrow({ where: { id: assignedCoupon.id } });
+  assert.equal(usedCoupon.usageCount, 1);
+  assert.equal(usedCoupon.active, false, "one-time coupon should be archived after use");
 
   await db.product.update({
     where: { id: productId },

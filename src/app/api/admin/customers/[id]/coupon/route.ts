@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isAdmin } from "@/lib/admin";
+import { createUniqueCouponCode } from "@/lib/coupon-code";
 import { db } from "@/lib/db";
 
 export async function POST(
@@ -23,7 +24,7 @@ export async function POST(
     return NextResponse.json({ error: "Клиентът трябва да има повече от 5 поръчки." }, { status: 409 });
   }
 
-  const code = `LOYAL${parsed.data.percent}-${customer.id.slice(-5).toUpperCase()}-${Date.now().toString().slice(-4)}`;
+  const code = await createUniqueCouponCode();
   const coupon = await db.coupon.create({
     data: {
       code,

@@ -51,9 +51,16 @@ export async function POST(request: Request) {
         });
       }
       if (order.couponId) {
+        const coupon = await transaction.coupon.findUnique({
+          where: { id: order.couponId },
+          select: { usageLimit: true },
+        });
         await transaction.coupon.updateMany({
           where: { id: order.couponId, usageCount: { gt: 0 } },
-          data: { usageCount: { decrement: 1 } },
+          data: {
+            usageCount: { decrement: 1 },
+            ...(coupon?.usageLimit === 1 ? { active: true } : {}),
+          },
         });
       }
     });

@@ -45,12 +45,6 @@ export async function PATCH(
             data: { stock: { increment: item.quantity } },
           });
         }
-        if (current.couponId) {
-          await transaction.coupon.updateMany({
-            where: { id: current.couponId, usageCount: { gt: 0 } },
-            data: { usageCount: { decrement: 1 } },
-          });
-        }
         return transaction.order.findUnique({ where: { id } });
       }
 
