@@ -14,6 +14,7 @@ export type Product = {
   categorySlug: string;
   price: number;
   compareAt?: number;
+  salePrice?: number;
   rating: number;
   reviews: number;
   stock: number;
@@ -22,6 +23,9 @@ export type Product = {
   imagePosition?: string;
   colors: string[];
   ages: string[];
+  tags?: string[];
+  brand?: string;
+  gender?: "NEUTRAL" | "GIRLS" | "BOYS";
   description: string;
   details: string[];
   featured?: boolean;

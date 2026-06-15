@@ -22,20 +22,46 @@ enum OrderStatus {
   REFUNDED
 }
 
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum ProductGender {
+  NEUTRAL
+  GIRLS
+  BOYS
+}
+
 model User {
-  id        String     @id @default(cuid())
-  name      String?
-  email     String     @unique
-  password  String?
-  role      Role       @default(CUSTOMER)
-  image     String?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  addresses Address[]
-  carts     Cart[]
-  orders    Order[]
-  reviews   Review[]
-  wishlist  Wishlist[]
+  id                 String              @id @default(cuid())
+  name               String?
+  email              String              @unique
+  password           String?
+  role               Role                @default(CUSTOMER)
+  emailVerified      Boolean             @default(false)
+  image              String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  addresses          Address[]
+  carts              Cart[]
+  orders             Order[]
+  reviews            Review[]
+  wishlist           Wishlist[]
+  verificationTokens VerificationToken[]
+}
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model Address {
@@ -57,40 +83,63 @@ model Address {
 }
 
 model Category {
-  id          String    @id @default(cuid())
-  name        String
-  slug        String    @unique
-  description String?
-  image       String?
-  color       String?
-  products    Product[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id                String            @id @default(cuid())
+  name              String
+  slug              String            @unique
+  description       String?
+  image             String?
+  color             String?
+  primaryProducts   Product[]         @relation("PrimaryCategory")
+  productCategories ProductCategory[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
 }
 
 model Product {
-  id          String           @id @default(cuid())
-  name        String
-  slug        String           @unique
-  description String
-  details     String[]
-  price       Decimal          @db.Decimal(10, 2)
-  compareAt   Decimal?         @db.Decimal(10, 2)
-  sku         String           @unique
-  stock       Int              @default(0)
-  badge       String?
-  active      Boolean          @default(true)
-  featured    Boolean          @default(false)
-  categoryId  String
-  category    Category         @relation(fields: [categoryId], references: [id])
-  images      ProductImage[]
-  variants    ProductVariant[]
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
-  reviews     Review[]
-  wishlists   Wishlist[]
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  id                String            @id @default(cuid())
+  name              String
+  slug              String            @unique
+  description       String
+  details           String[]
+  price             Decimal           @db.Decimal(10, 2)
+  salePrice         Decimal?          @db.Decimal(10, 2)
+  compareAt         Decimal?          @db.Decimal(10, 2)
+  sku               String            @unique
+  stock             Int               @default(0)
+  badge             String?
+  brand             String?
+  tags              String[]          @default([])
+  ageGroup          String?
+  gender            ProductGender     @default(NEUTRAL)
+  status            ProductStatus     @default(ACTIVE)
+  active            Boolean           @default(true)
+  featured          Boolean           @default(false)
+  categoryId        String
+  category          Category          @relation("PrimaryCategory", fields: [categoryId], references: [id])
+  categories        ProductCategory[]
+  images            ProductImage[]
+  variants          ProductVariant[]
+  cartItems         CartItem[]
+  orderItems        OrderItem[]
+  reviews           Review[]
+  wishlists         Wishlist[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@index([status, createdAt])
+  @@index([categoryId, status])
+  @@index([price])
+  @@index([ageGroup])
+}
+
+model ProductCategory {
+  productId  String
+  categoryId String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([productId, categoryId])
+  @@index([categoryId])
 }
 
 model ProductImage {

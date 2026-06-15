@@ -1,10 +1,30 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { categories } from "@/lib/products";
+import { isAdmin } from "@/lib/admin";
 import { db } from "@/lib/db";
-export async function GET() { return NextResponse.json(process.env.DATABASE_URL ? await db.category.findMany({ include: { _count: { select: { products: true } } } }) : categories); }
+
+const categorySchema = z.object({
+  name: z.string().trim().min(2),
+  slug: z.string().trim().min(2),
+  description: z.string().trim().nullable().optional(),
+  color: z.string().trim().nullable().optional(),
+});
+
+export async function GET() {
+  const categories = await db.category.findMany({
+    include: { _count: { select: { productCategories: true } } },
+    orderBy: { name: "asc" },
+  });
+  return NextResponse.json(categories);
+}
+
 export async function POST(request: Request) {
-  if (!process.env.DATABASE_URL) return NextResponse.json({ error: "Database unavailable" }, { status: 503 });
-  const data = z.object({ name: z.string().min(2), slug: z.string().min(2), description: z.string().optional(), color: z.string().optional() }).parse(await request.json());
-  return NextResponse.json(await db.category.create({ data }), { status: 201 });
+  if (!(await isAdmin())) {
+    return NextResponse.json({ error: "Нямате достъп." }, { status: 403 });
+  }
+  const parsed = categorySchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Проверете данните за категорията." }, { status: 400 });
+  }
+  return NextResponse.json(await db.category.create({ data: parsed.data }), { status: 201 });
 }

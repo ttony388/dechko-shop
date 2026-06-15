@@ -1,11 +1,26 @@
 import type { MetadataRoute } from "next";
-import { categories, products } from "@/lib/products";
-export default function sitemap(): MetadataRoute.Sitemap {
+import { getCatalogCategories, getCatalogProducts } from "@/lib/catalog";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const staticRoutes = ["", "/shop", "/cart", "/wishlist", "/contact", "/faq", "/privacy", "/terms"];
+  const [categories, products] = await Promise.all([
+    getCatalogCategories(),
+    getCatalogProducts(),
+  ]);
   return [
-    ...staticRoutes.map((route) => ({ url: `${base}${route}`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: route === "" ? 1 : .7 })),
-    ...categories.map((category) => ({ url: `${base}/category/${category.slug}`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: .8 })),
-    ...products.map((product) => ({ url: `${base}/product/${product.slug}`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: .8 })),
+    { url: base, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
+    { url: `${base}/shop`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    ...categories.map((category) => ({
+      url: `${base}/category/${category.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    })),
+    ...products.map((product) => ({
+      url: `${base}/product/${product.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    })),
   ];
 }

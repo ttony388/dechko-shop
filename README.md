@@ -1,20 +1,8 @@
 # Дечко
 
-Production-oriented children's ecommerce storefront built with Next.js 15, React 19, TypeScript, Tailwind CSS 4, Framer Motion, Zustand, Auth.js, Prisma 7, PostgreSQL, Stripe, React Hook Form, Zod, and Cloudinary.
+Next.js 15 ecommerce проект с PostgreSQL, Prisma, Auth.js, Stripe, Cloudinary и Resend.
 
-## Included
-
-- Responsive premium storefront, category, search, product, wishlist, cart, checkout, success, account, support, policy, and 404 pages
-- 50 realistic seeded products across seven categories
-- Persistent cart and wishlist, variants, inventory, discounts, shipping and tax calculations
-- Credentials authentication, account dashboard, orders, addresses, and profile views
-- Admin dashboard with product, category, order, customer, coupon, inventory, and analytics views
-- Prisma schema and CRUD-oriented API routes
-- Stripe Checkout handoff with a local demo fallback when Stripe is not configured
-- Signed Cloudinary upload endpoint
-- Metadata, Open Graph, Product JSON-LD, sitemap, robots, and web manifest
-
-## Local setup
+## Локално стартиране
 
 ```bash
 npm install
@@ -25,54 +13,103 @@ npm run db:seed
 npm run dev
 ```
 
-Open `http://localhost:3000`. Without PostgreSQL, the catalogue and checkout still run in demo mode. Demo login: `demo@dechko.bg` / `demo1234`.
+Отворете `http://localhost:3000`.
 
-## Adding products
+## Environment variables
 
-1. Start the application with `npm run dev`.
-2. Sign in at `http://localhost:3000/login` with an administrator account.
-3. Open `http://localhost:3000/admin/products`.
-4. Select **Добави продукт**, complete the form, choose an image, and save.
+Задължителни за базата и authentication:
 
-The product is written to PostgreSQL and appears immediately in the public shop, category, search, wishlist, and product pages.
+```env
+DATABASE_URL="postgresql://..."
+AUTH_SECRET="long-random-secret"
+AUTH_TRUST_HOST="true"
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+```
 
-When Cloudinary variables are configured, uploaded images are stored in `dechko/products`. Without Cloudinary, local development uploads are written to `public/uploads`. Local filesystem uploads are not durable on serverless production hosting, so configure Cloudinary before deployment.
+Задължителни за production email verification:
 
-## Database
+```env
+RESEND_API_KEY="re_..."
+EMAIL_FROM="Дечко <hello@your-verified-domain.bg>"
+```
 
-Create a PostgreSQL database and set `DATABASE_URL`. The schema includes User, Address, Product, Category, ProductImage, ProductVariant, Cart, CartItem, Order, OrderItem, Coupon, Review, and Wishlist models.
+Допълнителни интеграции:
 
-The seed command creates 50 products, variants, images, categories, the `DECHKO10` coupon, and an admin user:
+```env
+STRIPE_SECRET_KEY=""
+STRIPE_WEBHOOK_SECRET=""
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=""
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=""
+CLOUDINARY_API_KEY=""
+CLOUDINARY_API_SECRET=""
+```
+
+## Миграции
+
+За локална разработка:
+
+```bash
+npm run db:migrate
+```
+
+За production/Vercel database:
+
+```bash
+npx prisma migrate deploy
+```
+
+Миграцията `20260615143000_auth_catalog_features` добавя email verification, product statuses, tags, age group, gender, sale price и many-to-many категории.
+
+## Seed
+
+```bash
+npm run db:seed
+```
+
+Seed-ът създава 8 категории, 50 продукта, купон `DECHKO10` и admin:
 
 ```text
 admin@dechko.bg
 ChangeMe123!
 ```
 
-Change this password immediately outside local development.
+Сменете паролата извън локална среда.
 
-## Stripe
+## Локален тест на email verification
 
-Set `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, and `NEXT_PUBLIC_APP_URL`. `/api/checkout` creates a Stripe Checkout Session. Add a production webhook using `STRIPE_WEBHOOK_SECRET` to persist paid orders and update stock before launch.
+Без `RESEND_API_KEY` и `EMAIL_FROM`, development режимът отпечатва verification URL в конзолата на `npm run dev`.
 
-## Cloudinary
+1. Регистрирайте нов профил на `/register`.
+2. Отворете отпечатания `/verify-email?token=...` URL.
+3. Проверете, че login преди потвърждение е отказан.
+4. След потвърждение влезте със същите credentials.
+5. За нов линк използвайте `/verify-email?email=user@example.com`.
 
-Set the three Cloudinary variables. `/api/upload` returns a short-lived signature for direct browser uploads into `dechko/products`.
+Автоматичният database smoke test е:
 
-## Deploy
+```bash
+npm run test:features
+```
 
-1. Provision PostgreSQL and run `npm run db:migrate` and `npm run db:seed`.
-2. Add all variables from `.env.example` to the hosting platform.
-3. Deploy to Vercel with `npm run build`.
-4. Configure the Stripe production webhook and Cloudinary upload restrictions.
-5. Replace the demo admin password and connect transactional email for password reset and order notices.
+## Vercel
 
-## Generated imagery
+Добавете във Vercel Project Settings > Environment Variables:
 
-The project uses three original AI-generated assets:
+- `DATABASE_URL`
+- `AUTH_SECRET`
+- `AUTH_TRUST_HOST=true`
+- `NEXT_PUBLIC_APP_URL=https://your-domain`
+- `RESEND_API_KEY`
+- `EMAIL_FROM`
+- Stripe и Cloudinary променливите, ако интеграциите са активни
 
-- `public/hero-shop.png`
-- `public/creative-kit.png`
-- `public/playroom.png`
+Преди deployment приложете миграциите към production базата с `npx prisma migrate deploy`. Използваният в `EMAIL_FROM` домейн трябва да е verified в Resend.
 
-They were generated with the built-in image generation tool for this project.
+## Проверки
+
+```bash
+npm run typecheck
+npm run lint
+npm run test:features
+npm run build
+```

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { formatPrice } from "@/lib/utils";
 import { useCart } from "@/store/cart";
@@ -12,6 +12,21 @@ export default function CartPage() {
   const { items, removeItem, updateQuantity, applyCoupon, coupon } = useCart();
   const [code, setCode] = useState("");
   const [couponMessage, setCouponMessage] = useState("");
+  const [availabilityMessage, setAvailabilityMessage] = useState("");
+  const itemIds = items.map((item) => item.product.id).join(",");
+
+  useEffect(() => {
+    if (!itemIds) return;
+    fetch(`/api/products?ids=${encodeURIComponent(itemIds)}&limit=200`)
+      .then((response) => response.json())
+      .then((body: { products?: { id: string }[] }) => {
+        const available = new Set((body.products || []).map((product) => product.id));
+        const missing = items.filter((item) => !available.has(item.product.id));
+        missing.forEach((item) => removeItem(item.product.id));
+        if (missing.length) setAvailabilityMessage("Премахнахме продукт, който вече не е наличен.");
+      })
+      .catch(() => undefined);
+  }, [itemIds, items, removeItem]);
   const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
   const discount = coupon ? subtotal * 0.1 : 0;
   const shipping = subtotal >= 60 ? 0 : 4.9;
@@ -30,6 +45,11 @@ export default function CartPage() {
   return (
     <div className="container-shell py-14 md:py-20">
       <h1 className="section-title mb-10">Вашата количка.</h1>
+      {availabilityMessage && (
+        <p className="mb-6 rounded-2xl bg-yellow/25 p-4 text-sm font-black">
+          {availabilityMessage}
+        </p>
+      )}
       <div className="grid gap-8 lg:grid-cols-[1fr_390px]">
         <div className="space-y-4">
           {items.map(({ product, quantity, variant }) => (

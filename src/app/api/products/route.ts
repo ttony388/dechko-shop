@@ -1,96 +1,38 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
-import { z } from "zod";
-import { auth } from "@/auth";
-import { getCatalogProducts } from "@/lib/catalog";
-import { db } from "@/lib/db";
+import { getCatalogPage, type CatalogSort } from "@/lib/catalog";
 
-const productSchema = z.object({
-  name: z.string().trim().min(2),
-  slug: z.string().trim().min(2),
-  description: z.string().trim().min(10),
-  details: z.array(z.string().trim().min(1)).default([]),
-  price: z.number().positive(),
-  compareAt: z.number().positive().nullable().optional(),
-  sku: z.string().trim().min(2),
-  stock: z.number().int().min(0),
-  badge: z.string().trim().nullable().optional(),
-  featured: z.boolean().default(false),
-  active: z.boolean().default(true),
-  categoryId: z.string().min(1),
-  imageUrl: z.string().trim().min(1),
-  colors: z.array(z.string().trim().min(1)).default([]),
-});
+const sorts = new Set<CatalogSort>([
+  "newest",
+  "price-asc",
+  "price-desc",
+  "best-rated",
+  "on-sale",
+]);
 
-export async function GET() {
-  return NextResponse.json(await getCatalogProducts());
+export async function GET(request: Request) {
+  const params = new URL(request.url).searchParams;
+  const sortValue = params.get("sort") as CatalogSort | null;
+  const page = numberParam(params.get("page"));
+  const limit = numberParam(params.get("limit"));
+  const minPrice = numberParam(params.get("minPrice"));
+  const maxPrice = numberParam(params.get("maxPrice"));
+
+  const result = await getCatalogPage({
+    ids: params.get("ids")?.split(",").filter(Boolean),
+    category: params.get("category") || undefined,
+    search: params.get("search") || undefined,
+    ageGroup: params.get("ageGroup") || undefined,
+    sort: sortValue && sorts.has(sortValue) ? sortValue : "newest",
+    page,
+    limit,
+    minPrice,
+    maxPrice,
+  });
+  return NextResponse.json(result);
 }
 
-export async function POST(request: Request) {
-  const session = await auth();
-  if (session?.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Нямате достъп." }, { status: 403 });
-  }
-
-  try {
-    const data = productSchema.parse(await request.json());
-    const product = await db.product.create({
-      data: {
-        name: data.name,
-        slug: data.slug,
-        description: data.description,
-        details: data.details,
-        price: data.price,
-        compareAt: data.compareAt || null,
-        sku: data.sku,
-        stock: data.stock,
-        badge: data.badge || null,
-        featured: data.featured,
-        active: data.active,
-        categoryId: data.categoryId,
-        images: {
-          create: [{ url: data.imageUrl, alt: data.name, position: 0 }],
-        },
-        variants: {
-          create: data.colors.map((color, index) => ({
-            name: "Цвят",
-            value: color,
-            sku: `${data.sku}-C${index + 1}`,
-            stock: data.stock,
-          })),
-        },
-      },
-      include: { category: true, images: true, variants: true },
-    });
-
-    revalidatePath("/");
-    revalidatePath("/shop");
-    revalidatePath(`/category/${product.category.slug}`);
-    revalidatePath(`/product/${product.slug}`);
-
-    return NextResponse.json(product, { status: 201 });
-  } catch (error) {
-    if (
-      typeof error === "object" &&
-      error &&
-      "code" in error &&
-      error.code === "P2002"
-    ) {
-      return NextResponse.json(
-        { error: "Slug или SKU вече съществува." },
-        { status: 409 },
-      );
-    }
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Проверете задължителните полета." },
-        { status: 400 },
-      );
-    }
-    console.error(error);
-    return NextResponse.json(
-      { error: "Продуктът не беше записан." },
-      { status: 500 },
-    );
-  }
+function numberParam(value: string | null) {
+  if (!value) return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
 }
