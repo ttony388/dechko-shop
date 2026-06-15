@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2 } from "lucide-react";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,6 +19,11 @@ const formSchema = z.object({
 });
 
 type Values = z.infer<typeof formSchema>;
+type RegistrationState = {
+  email: string;
+  emailSent: boolean;
+  existing: boolean;
+};
 
 function getSchema(mode: "login" | "register") {
   return formSchema.superRefine((values, context) => {
@@ -44,7 +49,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
   const router = useRouter();
   const schema = useMemo(() => getSchema(mode), [mode]);
   const [serverError, setServerError] = useState("");
-  const [registeredEmail, setRegisteredEmail] = useState("");
+  const [registrationState, setRegistrationState] = useState<RegistrationState | null>(null);
   const {
     register,
     handleSubmit,
@@ -58,20 +63,38 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
     setServerError("");
 
     if (mode === "register") {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      const body = (await response.json().catch(() => null)) as {
-        error?: string;
-        email?: string;
-      } | null;
-      if (!response.ok) {
-        setServerError(body?.error || "Регистрацията не беше успешна.");
-        return;
+      try {
+        const response = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        });
+        const body = (await response.json().catch(() => null)) as {
+          error?: string;
+          email?: string;
+          emailSent?: boolean;
+          requiresVerification?: boolean;
+        } | null;
+        if (!response.ok) {
+          if (body?.requiresVerification && body.email) {
+            setRegistrationState({
+              email: body.email,
+              emailSent: false,
+              existing: true,
+            });
+            return;
+          }
+          setServerError(body?.error || "Регистрацията не беше успешна.");
+          return;
+        }
+        setRegistrationState({
+          email: body?.email || values.email,
+          emailSent: body?.emailSent !== false,
+          existing: false,
+        });
+      } catch {
+        setServerError("Връзката с услугата за регистрация беше прекъсната. Моля, опитайте отново.");
       }
-      setRegisteredEmail(body?.email || values.email);
       return;
     }
 
@@ -101,20 +124,33 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
     router.refresh();
   }
 
-  if (registeredEmail) {
+  if (registrationState) {
+    const needsResend = !registrationState.emailSent;
     return (
       <div className="rounded-[1.8rem] bg-mint p-6 text-center">
-        <CheckCircle2 className="mx-auto text-turquoise-dark" size={42} />
-        <h2 className="mt-4 text-xl font-black">Проверете пощата си</h2>
+        {needsResend ? (
+          <AlertCircle className="mx-auto text-coral" size={42} />
+        ) : (
+          <CheckCircle2 className="mx-auto text-turquoise-dark" size={42} />
+        )}
+        <h2 className="mt-4 text-xl font-black">
+          {needsResend
+            ? registrationState.existing
+              ? "Профилът очаква потвърждение"
+              : "Профилът е създаден"
+            : "Проверете пощата си"}
+        </h2>
         <p className="mt-2 text-sm font-semibold leading-6 text-ink/65">
-          Регистрацията е успешна! Изпратихме линк за потвърждение на вашия имейл.
+          {needsResend
+            ? "Не успяхме да доставим линка за потвърждение. Изпратете нов линк, за да активирате профила си."
+            : "Регистрацията е успешна! Изпратихме линк за потвърждение на вашия имейл."}
         </p>
-        <p className="mt-2 text-sm font-black">{registeredEmail}</p>
+        <p className="mt-2 text-sm font-black">{registrationState.email}</p>
         <Link
-          href={`/verify-email?email=${encodeURIComponent(registeredEmail)}`}
+          href={`/verify-email?email=${encodeURIComponent(registrationState.email)}`}
           className="mt-5 inline-flex h-11 items-center rounded-full bg-ink px-5 text-sm font-black text-white"
         >
-          Изпрати нов линк
+          {needsResend ? "Изпрати линк за потвърждение" : "Изпрати нов линк"}
         </Link>
       </div>
     );

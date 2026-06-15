@@ -48,17 +48,22 @@ export function VerifyEmailClient() {
     event.preventDefault();
     setSending(true);
     setMessage("");
-    const response = await fetch("/api/auth/resend-verification", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-    const body = (await response.json().catch(() => null)) as {
-      message?: string;
-      error?: string;
-    } | null;
-    setMessage(body?.message || body?.error || "Не успяхме да изпратим линка.");
-    setSending(false);
+    try {
+      const response = await fetch("/api/auth/resend-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const body = (await response.json().catch(() => null)) as {
+        message?: string;
+        error?: string;
+      } | null;
+      setMessage(body?.message || body?.error || "Не успяхме да изпратим линка.");
+    } catch {
+      setMessage("Връзката с услугата за имейли беше прекъсната. Моля, опитайте отново.");
+    } finally {
+      setSending(false);
+    }
   }
 
   if (state === "loading") {

@@ -14,15 +14,15 @@ export async function POST(request: Request) {
     );
   }
 
-  const existing = await db.user.findUnique({
-    where: { email: parsed.data.email },
-    select: { id: true },
-  });
-  if (existing) {
-    return NextResponse.json({ error: "Този имейл вече е регистриран." }, { status: 409 });
-  }
-
   try {
+    const existing = await db.user.findUnique({
+      where: { email: parsed.data.email },
+      select: { email: true, emailVerified: true },
+    });
+    if (existing) {
+      return duplicateRegistrationResponse(existing.email, existing.emailVerified);
+    }
+
     const user = await db.user.create({
       data: {
         name: parsed.data.name,
@@ -41,20 +41,36 @@ export async function POST(request: Request) {
         verificationUrl: verification.url,
       });
     } catch (emailError) {
-      await db.user.delete({ where: { id: user.id } }).catch(() => undefined);
-      throw emailError;
+      await db.verificationToken.deleteMany({ where: { userId: user.id } }).catch(() => undefined);
+      console.error("Registration email failed", emailError);
+      return NextResponse.json(
+        {
+          message:
+            "Профилът е създаден, но не успяхме да изпратим линка за потвърждение. Моля, опитайте да го изпратите отново.",
+          email: user.email,
+          emailSent: false,
+        },
+        { status: 201 },
+      );
     }
 
     return NextResponse.json(
       {
         message: "Регистрацията е успешна! Изпратихме линк за потвърждение на вашия имейл.",
         email: user.email,
+        emailSent: true,
       },
       { status: 201 },
     );
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      return NextResponse.json({ error: "Този имейл вече е регистриран." }, { status: 409 });
+      const existing = await db.user.findUnique({
+        where: { email: parsed.data.email },
+        select: { email: true, emailVerified: true },
+      });
+      if (existing) {
+        return duplicateRegistrationResponse(existing.email, existing.emailVerified);
+      }
     }
     console.error("Registration failed", error);
     return NextResponse.json(
@@ -62,4 +78,17 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
+}
+
+function duplicateRegistrationResponse(email: string, emailVerified: boolean) {
+  return NextResponse.json(
+    emailVerified
+      ? { error: "Този имейл вече е регистриран." }
+      : {
+          error: "Профилът вече съществува, но имейлът още не е потвърден.",
+          email,
+          requiresVerification: true,
+        },
+    { status: 409 },
+  );
 }

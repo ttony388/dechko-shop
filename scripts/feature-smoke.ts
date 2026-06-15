@@ -10,9 +10,11 @@ import { createVerificationToken, verifyEmailToken } from "../src/lib/email-veri
 
 const stamp = Date.now();
 const email = `codex-smoke-${stamp}@example.com`;
+const deliveryFailureEmail = `codex-smoke-email-failure-${stamp}@example.com`;
 const password = "SmokeTest123!";
 const slug = `codex-smoke-product-${stamp}`;
 let userId = "";
+let deliveryFailureUserId = "";
 let productId = "";
 
 async function main() {
@@ -32,7 +34,48 @@ async function main() {
     body: JSON.stringify({ name: "Smoke Test", email, password }),
   }));
   assert.equal(duplicate.status, 409, "duplicate registration should be rejected");
+  const duplicateBody = await duplicate.json() as { requiresVerification?: boolean };
+  assert.equal(
+    duplicateBody.requiresVerification,
+    true,
+    "an unverified duplicate should be directed to resend verification",
+  );
   assert.equal((await authenticateCredentials({ email, password })).status, "unverified");
+
+  const mutableEnv = process.env as Record<string, string | undefined>;
+  const previousNodeEnv = mutableEnv.NODE_ENV;
+  const previousResendApiKey = mutableEnv.RESEND_API_KEY;
+  const previousEmailFrom = mutableEnv.EMAIL_FROM;
+  mutableEnv.NODE_ENV = "production";
+  delete mutableEnv.RESEND_API_KEY;
+  delete mutableEnv.EMAIL_FROM;
+  try {
+    const registrationWithoutEmail = await register(new Request("http://localhost/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ name: "Email Failure", email: deliveryFailureEmail, password }),
+    }));
+    assert.equal(
+      registrationWithoutEmail.status,
+      201,
+      "email delivery failure should not discard a newly created profile",
+    );
+    const registrationWithoutEmailBody = await registrationWithoutEmail.json() as {
+      emailSent?: boolean;
+    };
+    assert.equal(registrationWithoutEmailBody.emailSent, false);
+    const deliveryFailureUser = await db.user.findUniqueOrThrow({
+      where: { email: deliveryFailureEmail },
+    });
+    deliveryFailureUserId = deliveryFailureUser.id;
+    assert.equal(deliveryFailureUser.emailVerified, false);
+  } finally {
+    if (previousNodeEnv === undefined) delete mutableEnv.NODE_ENV;
+    else mutableEnv.NODE_ENV = previousNodeEnv;
+    if (previousResendApiKey === undefined) delete mutableEnv.RESEND_API_KEY;
+    else mutableEnv.RESEND_API_KEY = previousResendApiKey;
+    if (previousEmailFrom === undefined) delete mutableEnv.EMAIL_FROM;
+    else mutableEnv.EMAIL_FROM = previousEmailFrom;
+  }
 
   assert.equal((await verifyEmailToken("not-a-real-token")).status, "invalid");
   const verification = await createVerificationToken(userId);
@@ -109,6 +152,9 @@ async function main() {
 main()
   .finally(async () => {
     if (productId) await db.product.delete({ where: { id: productId } }).catch(() => undefined);
+    if (deliveryFailureUserId) {
+      await db.user.delete({ where: { id: deliveryFailureUserId } }).catch(() => undefined);
+    }
     if (userId) await db.user.delete({ where: { id: userId } }).catch(() => undefined);
     await db.$disconnect();
   })
