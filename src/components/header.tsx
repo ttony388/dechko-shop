@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   Heart,
   LogIn,
@@ -16,6 +17,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Logo } from "@/components/logo";
+import { Input } from "@/components/ui/input";
+import { formatPrice } from "@/lib/utils";
 import { useCart } from "@/store/cart";
 
 const links = [
@@ -34,10 +37,25 @@ type HeaderProps = {
   } | null;
 };
 
+type SearchResult = {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  compareAt?: number;
+  stock: number;
+  image: string;
+  category: string;
+};
+
 export function Header({ user }: HeaderProps) {
   const pathname = usePathname();
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
   const count = useCart((state) =>
     state.items.reduce((sum, item) => sum + item.quantity, 0),
   );
@@ -45,6 +63,7 @@ export function Header({ user }: HeaderProps) {
 
   useEffect(() => {
     setMenuOpen(false);
+    setSearchOpen(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -52,7 +71,7 @@ export function Header({ user }: HeaderProps) {
 
     function syncBodyOverflow() {
       document.body.style.overflow =
-        menuOpen && !desktopQuery.matches ? "hidden" : "";
+        searchOpen || (menuOpen && !desktopQuery.matches) ? "hidden" : "";
     }
 
     syncBodyOverflow();
@@ -61,11 +80,14 @@ export function Header({ user }: HeaderProps) {
       desktopQuery.removeEventListener("change", syncBodyOverflow);
       document.body.style.overflow = "";
     };
-  }, [menuOpen]);
+  }, [menuOpen, searchOpen]);
 
   useEffect(() => {
     function closeMenuWithEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") setMenuOpen(false);
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        setSearchOpen(false);
+      }
     }
 
     function closeDesktopMenu(event: MouseEvent) {
@@ -85,6 +107,39 @@ export function Header({ user }: HeaderProps) {
       document.removeEventListener("mousedown", closeDesktopMenu);
     };
   }, []);
+
+  useEffect(() => {
+    const query = searchQuery.trim();
+    if (query.length < 2) {
+      setSearchResults([]);
+      setSearchLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeout = window.setTimeout(async () => {
+      setSearchLoading(true);
+      try {
+        const response = await fetch(
+          `/api/products?search=${encodeURIComponent(query)}&limit=6`,
+          { signal: controller.signal },
+        );
+        const body = (await response.json()) as { products?: SearchResult[] };
+        if (response.ok) setSearchResults(body.products || []);
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === "AbortError")) {
+          setSearchResults([]);
+        }
+      } finally {
+        if (!controller.signal.aborted) setSearchLoading(false);
+      }
+    }, 250);
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [searchQuery]);
 
   return (
     <>
@@ -112,9 +167,17 @@ export function Header({ user }: HeaderProps) {
             ref={menuRef}
             className="relative flex shrink-0 items-center gap-0.5 sm:gap-2"
           >
-            <Link href="/search" aria-label="Търсене" className="icon-button grid">
+            <button
+              type="button"
+              aria-label="Търсене"
+              className="icon-button grid"
+              onClick={() => {
+                setMenuOpen(false);
+                setSearchOpen(true);
+              }}
+            >
               <Search size={19} />
-            </Link>
+            </button>
             <Link
               href="/wishlist"
               aria-label="Любими"
@@ -155,19 +218,7 @@ export function Header({ user }: HeaderProps) {
                 id="site-menu"
                 className="absolute right-0 top-[calc(100%+12px)] hidden w-72 overflow-hidden rounded-[1.4rem] border border-ink/5 bg-white p-2 shadow-soft lg:block"
               >
-                <div className="grid border-b border-ink/8 pb-2">
-                  {links.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="rounded-xl px-4 py-2.5 text-sm font-black hover:bg-mint"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
-
-                <div className="grid pt-2">
+                <div className="grid">
                   {user ? (
                     <>
                       <div className="px-4 pb-2 pt-1">
@@ -222,6 +273,120 @@ export function Header({ user }: HeaderProps) {
           </div>
         </div>
       </header>
+
+      {searchOpen && (
+        <div
+          className="fixed inset-0 z-[110] flex justify-center overflow-y-auto bg-ink/45 p-4 pt-[12vh] backdrop-blur-sm"
+          onMouseDown={() => setSearchOpen(false)}
+        >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-label="Търсене на продукти"
+            className="h-fit w-full max-w-2xl rounded-[2rem] bg-white p-5 shadow-2xl sm:p-7"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="eyebrow text-turquoise-dark">Търсене</p>
+                <h2 className="mt-1 text-2xl font-black">Какво търсите?</h2>
+              </div>
+              <button
+                type="button"
+                className="icon-button grid rounded-xl border border-ink/20"
+                onClick={() => setSearchOpen(false)}
+                aria-label="Затвори търсачката"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <label className="relative mt-5 block">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-ink/35" size={20} />
+              <Input
+                autoFocus
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Напишете име или ключова дума..."
+                className="h-14 pl-12 pr-12 text-base"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-ink/40"
+                  aria-label="Изчисти търсенето"
+                >
+                  <X size={18} />
+                </button>
+              )}
+            </label>
+
+            <div className="mt-5">
+              {searchQuery.trim().length < 2 ? (
+                <p className="rounded-2xl bg-cream p-5 text-center text-sm font-bold text-ink/45">
+                  Въведете поне 2 символа.
+                </p>
+              ) : searchLoading ? (
+                <p className="rounded-2xl bg-cream p-5 text-center text-sm font-bold text-ink/45">
+                  Търсим продукти...
+                </p>
+              ) : searchResults.length ? (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {searchResults.map((product) => (
+                    <Link
+                      key={product.id}
+                      href={`/product/${product.slug}`}
+                      className="flex min-w-0 items-center gap-3 rounded-2xl border border-ink/8 p-3 transition hover:border-turquoise hover:bg-mint/40"
+                    >
+                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-mint">
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          fill
+                          sizes="80px"
+                          className="object-cover"
+                          unoptimized={product.image.startsWith("http")}
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold uppercase tracking-wide text-ink/40">
+                          {product.category}
+                        </p>
+                        <p className="line-clamp-2 font-black">{product.name}</p>
+                        <div className="mt-1 flex flex-wrap items-center gap-2">
+                          <span className="font-black">{formatPrice(product.price)}</span>
+                          {product.compareAt && (
+                            <span className="text-xs text-ink/35 line-through">
+                              {formatPrice(product.compareAt)}
+                            </span>
+                          )}
+                        </div>
+                        {product.stock === 0 && (
+                          <p className="mt-1 text-xs font-black text-coral">Не е налично</p>
+                        )}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <p className="rounded-2xl bg-cream p-5 text-center text-sm font-bold text-ink/45">
+                  Не намерихме продукт по това търсене.
+                </p>
+              )}
+            </div>
+
+            {searchQuery.trim().length >= 2 && searchResults.length > 0 && (
+              <Link
+                href={`/search?q=${encodeURIComponent(searchQuery.trim())}`}
+                className="mt-5 flex h-12 items-center justify-center rounded-full bg-ink px-6 text-sm font-black text-white"
+              >
+                Вижте всички резултати
+              </Link>
+            )}
+          </section>
+        </div>
+      )}
 
       {menuOpen && (
         <div
