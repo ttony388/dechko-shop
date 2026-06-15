@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { useCart } from "@/store/cart";
 
 export function Providers({
@@ -15,7 +15,12 @@ export function Providers({
   wishlist: string[];
 }) {
   const pathname = usePathname();
+  const setCartContext = useCart((state) => state.setCartContext);
   const setWishlistContext = useCart((state) => state.setWishlistContext);
+
+  useLayoutEffect(() => {
+    setCartContext(userId);
+  }, [setCartContext, userId]);
 
   useEffect(() => {
     setWishlistContext(userId, wishlist);
