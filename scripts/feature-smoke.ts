@@ -20,6 +20,7 @@ let deliveryFailureUserId = "";
 let recoveryUserId = "";
 let productId = "";
 const orderIds: string[] = [];
+const couponIds: string[] = [];
 
 async function main() {
   const registration = await register(new Request("http://localhost/api/auth/register", {
@@ -116,6 +117,9 @@ async function main() {
   assert.equal((await verifyEmailToken(verification.token)).status, "verified");
   assert.equal((await authenticateCredentials({ email, password })).status, "ok");
   assert.equal(await db.verificationToken.count({ where: { userId } }), 0);
+  await db.user.update({ where: { id: userId }, data: { blocked: true } });
+  assert.equal((await authenticateCredentials({ email, password })).status, "blocked");
+  await db.user.update({ where: { id: userId }, data: { blocked: false } });
 
   await db.user.update({ where: { id: userId }, data: { emailVerified: false } });
   const expiredToken = randomBytes(32).toString("hex");
@@ -186,6 +190,7 @@ async function main() {
       },
       items: [{ product: { id: productId }, quantity: 2 }],
       saveAddress: false,
+      paymentMethod: "CASH_ON_DELIVERY",
     },
     null,
   );
@@ -198,6 +203,8 @@ async function main() {
   orderIds.push(savedOrder.id);
   assert.equal(savedOrder.items.length, 1);
   assert.equal(savedOrder.items[0].quantity, 2);
+  assert.equal(savedOrder.paymentMethod, "CASH_ON_DELIVERY");
+  assert.equal(savedOrder.status, "PROCESSING");
 
   const accountCheckoutResponse = await createCheckoutOrder(
     {
@@ -212,6 +219,7 @@ async function main() {
       },
       items: [{ product: { id: productId }, quantity: 1 }],
       saveAddress: true,
+      paymentMethod: "CASH_ON_DELIVERY",
     },
     userId,
   );
@@ -227,6 +235,62 @@ async function main() {
     where: { userId, isDefault: true },
   });
   assert.equal(defaultAddress.line1, "ул. Профил 2");
+  assert.equal((await db.product.findUniqueOrThrow({ where: { id: productId } })).stock, 2);
+
+  const assignedCoupon = await db.coupon.create({
+    data: {
+      code: `SMOKE-${stamp}`,
+      type: "percent",
+      value: 10,
+      usageLimit: 1,
+      assignedUserId: userId,
+    },
+  });
+  couponIds.push(assignedCoupon.id);
+  const guestCouponResponse = await createCheckoutOrder(
+    {
+      customer: {
+        email: "other@example.com",
+        firstName: "Guest",
+        lastName: "Customer",
+        phone: "0888123456",
+        address: "ул. Тест 3",
+        city: "София",
+        postalCode: "1000",
+      },
+      items: [{ product: { id: productId }, quantity: 1 }],
+      coupon: assignedCoupon.code,
+      paymentMethod: "CASH_ON_DELIVERY",
+    },
+    null,
+  );
+  assert.equal(guestCouponResponse.status, 400, "assigned coupon must reject another customer");
+
+  const couponCheckoutResponse = await createCheckoutOrder(
+    {
+      customer: {
+        email,
+        firstName: "Smoke",
+        lastName: "Test",
+        phone: "0888123456",
+        address: "ул. Профил 2",
+        city: "София",
+        postalCode: "1000",
+      },
+      items: [{ product: { id: productId }, quantity: 1 }],
+      coupon: assignedCoupon.code,
+      paymentMethod: "CASH_ON_DELIVERY",
+    },
+    userId,
+  );
+  assert.equal(couponCheckoutResponse.status, 200);
+  const couponCheckoutBody = await couponCheckoutResponse.json() as { orderId: string };
+  const couponOrder = await db.order.findUniqueOrThrow({
+    where: { number: couponCheckoutBody.orderId },
+  });
+  orderIds.push(couponOrder.id);
+  assert.equal(Number(couponOrder.discount.toFixed(2)), 2);
+  assert.equal((await db.coupon.findUniqueOrThrow({ where: { id: assignedCoupon.id } })).usageCount, 1);
 
   await db.product.update({
     where: { id: productId },
@@ -242,6 +306,9 @@ main()
   .finally(async () => {
     if (orderIds.length) {
       await db.order.deleteMany({ where: { id: { in: orderIds } } }).catch(() => undefined);
+    }
+    if (couponIds.length) {
+      await db.coupon.deleteMany({ where: { id: { in: couponIds } } }).catch(() => undefined);
     }
     if (productId) await db.product.delete({ where: { id: productId } }).catch(() => undefined);
     if (deliveryFailureUserId) {

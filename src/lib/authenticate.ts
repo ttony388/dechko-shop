@@ -11,6 +11,7 @@ export async function authenticateCredentials(credentials: unknown) {
   if (!user?.password || !(await compare(parsed.data.password, user.password))) {
     return { status: "invalid" as const };
   }
+  if (user.blocked) return { status: "blocked" as const };
   if (!user.emailVerified) {
     if (isEmailVerificationRequired()) return { status: "unverified" as const };
     const activatedUser = await db.user.update({

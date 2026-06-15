@@ -22,6 +22,7 @@ const bodySchema = z.object({
   })).min(1),
   coupon: z.string().trim().optional().nullable(),
   saveAddress: z.boolean().optional().default(false),
+  paymentMethod: z.enum(["CARD", "CASH_ON_DELIVERY"]).default("CARD"),
 });
 
 export async function createCheckoutOrder(
@@ -31,6 +32,7 @@ export async function createCheckoutOrder(
 ) {
   try {
     const body = bodySchema.parse(input);
+    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
     const ids = [...new Set(body.items.map((item) => item.product.id))];
     const products = await db.product.findMany({
       where: { id: { in: ids }, active: true, status: "ACTIVE" },
@@ -50,6 +52,12 @@ export async function createCheckoutOrder(
         { status: 409 },
       );
     }
+    if (body.paymentMethod === "CARD" && !stripeSecretKey) {
+      return NextResponse.json(
+        { error: "Плащането с карта временно не е достъпно. Изберете наложен платеж." },
+        { status: 503 },
+      );
+    }
 
     const subtotal = body.items.reduce((sum, item) => {
       const product = productMap.get(item.product.id)!;
@@ -60,17 +68,30 @@ export async function createCheckoutOrder(
           where: {
             code: body.coupon.toUpperCase(),
             active: true,
-            OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+            AND: [
+              { OR: [{ assignedUserId: null }, { assignedUserId: userId || "__guest__" }] },
+              { OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] },
+            ],
           },
         })
       : null;
+    if (body.coupon && !coupon) {
+      return NextResponse.json({ error: "Купонът е невалиден или не е предназначен за този профил." }, { status: 400 });
+    }
+    if (coupon?.usageLimit && coupon.usageCount >= coupon.usageLimit) {
+      return NextResponse.json({ error: "Лимитът за използване на купона е достигнат." }, { status: 400 });
+    }
+    if (coupon?.minOrder && subtotal < Number(coupon.minOrder)) {
+      return NextResponse.json(
+        { error: `Минималната стойност за този купон е ${Number(coupon.minOrder).toFixed(2)} €.` },
+        { status: 400 },
+      );
+    }
     const discount = coupon
       ? coupon.type === "percent"
         ? subtotal * (Number(coupon.value) / 100)
         : Math.min(subtotal, Number(coupon.value))
-      : body.coupon
-        ? subtotal * 0.1
-        : 0;
+      : 0;
     const shipping = subtotal >= 60 ? 0 : 4.9;
     const total = subtotal - discount + shipping;
     const orderNumber = `DCH-${new Date().getFullYear()}-${Date.now().toString().slice(-8)}`;
@@ -105,12 +126,14 @@ export async function createCheckoutOrder(
           number: orderNumber,
           userId,
           email: body.customer.email,
-          status: process.env.STRIPE_SECRET_KEY ? "PENDING" : "PROCESSING",
+          status:
+            body.paymentMethod === "CASH_ON_DELIVERY" ? "PROCESSING" : "PENDING",
           subtotal,
           discount,
           shipping,
           total,
           currency: "EUR",
+          paymentMethod: body.paymentMethod,
           shippingAddress,
           ...(coupon ? { couponId: coupon.id } : {}),
           items: {
@@ -132,21 +155,37 @@ export async function createCheckoutOrder(
         },
       });
 
-      if (coupon) {
-        await transaction.coupon.update({
-          where: { id: coupon.id },
-          data: { usageCount: { increment: 1 } },
+      for (const item of body.items) {
+        const updated = await transaction.product.updateMany({
+          where: { id: item.product.id, stock: { gte: item.quantity } },
+          data: { stock: { decrement: item.quantity } },
         });
+        if (updated.count !== 1) throw new Error("INSUFFICIENT_STOCK");
+      }
+
+      if (coupon) {
+        if (coupon.usageLimit) {
+          const claimed = await transaction.coupon.updateMany({
+            where: { id: coupon.id, active: true, usageCount: { lt: coupon.usageLimit } },
+            data: { usageCount: { increment: 1 } },
+          });
+          if (!claimed.count) throw new Error("COUPON_EXHAUSTED");
+        } else {
+          await transaction.coupon.update({
+            where: { id: coupon.id },
+            data: { usageCount: { increment: 1 } },
+          });
+        }
       }
       return created;
     });
 
-    if (!process.env.STRIPE_SECRET_KEY) {
-      return NextResponse.json({ orderId: order.number, demo: true });
+    if (body.paymentMethod === "CASH_ON_DELIVERY") {
+      return NextResponse.json({ orderId: order.number });
     }
 
     try {
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+      const stripe = new Stripe(stripeSecretKey!);
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || new URL(requestUrl).origin;
       const stripeCoupon = discount > 0
         ? await stripe.coupons.create({
@@ -200,13 +239,37 @@ export async function createCheckoutOrder(
       });
       return NextResponse.json({ url: stripeSession.url, orderId: order.number });
     } catch (error) {
-      await db.order.update({
-        where: { id: order.id },
-        data: { status: "CANCELLED" },
+      await db.$transaction(async (transaction) => {
+        const cancelled = await transaction.order.updateMany({
+          where: { id: order.id, status: "PENDING" },
+          data: { status: "CANCELLED" },
+        });
+        if (!cancelled.count) return;
+        for (const item of body.items) {
+          await transaction.product.update({
+            where: { id: item.product.id },
+            data: { stock: { increment: item.quantity } },
+          });
+        }
+        if (coupon) {
+          await transaction.coupon.updateMany({
+            where: { id: coupon.id, usageCount: { gt: 0 } },
+            data: { usageCount: { decrement: 1 } },
+          });
+        }
       }).catch(() => undefined);
       throw error;
     }
   } catch (error) {
+    if (error instanceof Error && error.message === "COUPON_EXHAUSTED") {
+      return NextResponse.json({ error: "Лимитът за използване на купона е достигнат." }, { status: 409 });
+    }
+    if (error instanceof Error && error.message === "INSUFFICIENT_STOCK") {
+      return NextResponse.json(
+        { error: "Някой от продуктите вече не е наличен в желаното количество." },
+        { status: 409 },
+      );
+    }
     console.error("Checkout failed", error);
     return NextResponse.json({ error: "Неуспешно създаване на поръчка." }, { status: 400 });
   }

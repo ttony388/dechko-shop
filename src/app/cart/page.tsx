@@ -9,11 +9,17 @@ import { formatPrice } from "@/lib/utils";
 import { useCart } from "@/store/cart";
 
 export default function CartPage() {
-  const { items, removeItem, updateQuantity, applyCoupon, coupon } = useCart();
+  const { items, removeItem, updateQuantity, setCoupon, coupon } = useCart();
   const [code, setCode] = useState("");
   const [couponMessage, setCouponMessage] = useState("");
   const [availabilityMessage, setAvailabilityMessage] = useState("");
   const itemIds = items.map((item) => item.product.id).join(",");
+  const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const discount = coupon
+    ? coupon.type === "percent"
+      ? subtotal * (coupon.value / 100)
+      : Math.min(subtotal, coupon.value)
+    : 0;
 
   useEffect(() => {
     if (!itemIds) return;
@@ -27,11 +33,28 @@ export default function CartPage() {
       })
       .catch(() => undefined);
   }, [itemIds, items, removeItem]);
-  const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-  const discount = coupon ? subtotal * 0.1 : 0;
   const shipping = subtotal >= 60 ? 0 : 4.9;
   const tax = (subtotal - discount) * 0.2;
   const total = subtotal - discount + shipping;
+
+  async function applyCoupon() {
+    const response = await fetch(
+      `/api/coupons?code=${encodeURIComponent(code)}&subtotal=${subtotal}`,
+    );
+    const body = (await response.json().catch(() => null)) as {
+      code?: string;
+      type?: "percent" | "fixed";
+      value?: number;
+      error?: string;
+    } | null;
+    if (!response.ok || !body?.code || !body.type || body.value === undefined) {
+      setCoupon(null);
+      setCouponMessage(body?.error || "Невалиден код.");
+      return;
+    }
+    setCoupon({ code: body.code, type: body.type, value: body.value });
+    setCouponMessage("Кодът е приложен.");
+  }
 
   if (!items.length) return (
     <div className="container-shell flex min-h-[65vh] flex-col items-center justify-center py-20 text-center">
@@ -73,7 +96,7 @@ export default function CartPage() {
           </div>
           <div className="flex justify-between text-xl font-black"><span>Общо</span><span>{formatPrice(total)}</span></div>
           <Link href="/checkout" className="mt-6 flex h-14 items-center justify-center gap-2 rounded-full bg-yellow font-black text-ink">Към плащане <ArrowRight size={18} /></Link>
-          <div className="mt-6"><label className="mb-2 block text-xs font-black text-white/70">Код за отстъпка</label><div className="flex gap-2"><Input value={code} onChange={(event) => setCode(event.target.value)} placeholder="DECHKO10" className="border-0 text-ink" /><button onClick={() => setCouponMessage(applyCoupon(code) ? "Кодът е приложен." : "Невалиден код.")} className="rounded-2xl bg-white/10 px-4 text-xs font-black">Приложи</button></div>{couponMessage && <p className="mt-2 text-xs text-white/55">{couponMessage}</p>}</div>
+          <div className="mt-6"><label className="mb-2 block text-xs font-black text-white/70">Код за отстъпка</label><div className="flex gap-2"><Input value={code} onChange={(event) => setCode(event.target.value)} placeholder="DECHKO10" className="border-0 text-ink" /><button onClick={applyCoupon} className="rounded-2xl bg-white/10 px-4 text-xs font-black">Приложи</button></div>{couponMessage && <p className="mt-2 text-xs text-white/55">{couponMessage}</p>}</div>
           <p className="mt-5 text-center text-xs text-white/40">Сигурно плащане със Stripe</p>
         </aside>
       </div>

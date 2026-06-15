@@ -34,6 +34,11 @@ enum ProductGender {
   BOYS
 }
 
+enum PaymentMethod {
+  CARD
+  CASH_ON_DELIVERY
+}
+
 model User {
   id                 String              @id @default(cuid())
   name               String?
@@ -41,6 +46,8 @@ model User {
   password           String?
   role               Role                @default(CUSTOMER)
   emailVerified      Boolean             @default(false)
+  blocked            Boolean             @default(false)
+  failedDeliveries   Int                 @default(0)
   image              String?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
@@ -49,6 +56,7 @@ model User {
   orders             Order[]
   reviews            Review[]
   wishlist           Wishlist[]
+  assignedCoupons    Coupon[]            @relation("AssignedCoupons")
   verificationTokens VerificationToken[]
 }
 
@@ -196,9 +204,13 @@ model Coupon {
   usageCount  Int      @default(0)
   active      Boolean  @default(true)
   expiresAt   DateTime?
+  assignedUserId String?
+  assignedUser User?    @relation("AssignedCoupons", fields: [assignedUserId], references: [id], onDelete: SetNull)
   orders      Order[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([assignedUserId])
 }
 
 model Order {
@@ -213,6 +225,7 @@ model Order {
   tax             Decimal     @default(0) @db.Decimal(10, 2)
   total           Decimal     @db.Decimal(10, 2)
   currency        String      @default("EUR")
+  paymentMethod   PaymentMethod @default(CARD)
   stripeSessionId String?     @unique
   shippingAddress Json
   billingAddress  Json?

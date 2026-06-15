@@ -127,9 +127,12 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
       });
       const status = (await statusResponse.json().catch(() => null)) as {
         requiresVerification?: boolean;
+        blocked?: boolean;
       } | null;
       setServerError(
-        status?.requiresVerification
+        status?.blocked
+          ? "Профилът е блокиран. Свържете се с нас за съдействие."
+          : status?.requiresVerification
           ? "Моля, потвърдете имейла си, преди да влезете."
           : "Грешен имейл или парола.",
       );

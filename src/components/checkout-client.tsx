@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Check, CreditCard, LockKeyhole, MapPin, X } from "lucide-react";
+import { Banknote, Check, CreditCard, LockKeyhole, MapPin, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -41,8 +41,14 @@ export function CheckoutClient({
   const [showAddressPrompt, setShowAddressPrompt] = useState(false);
   const [promptHandled, setPromptHandled] = useState(false);
   const [saveAddress, setSaveAddress] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"CARD" | "CASH_ON_DELIVERY">("CARD");
   const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-  const total = subtotal * (coupon ? 0.9 : 1) + (subtotal >= 60 ? 0 : 4.9);
+  const discount = coupon
+    ? coupon.type === "percent"
+      ? subtotal * (coupon.value / 100)
+      : Math.min(subtotal, coupon.value)
+    : 0;
+  const total = subtotal - discount + (subtotal >= 60 ? 0 : 4.9);
   const {
     register,
     handleSubmit,
@@ -85,7 +91,13 @@ export function CheckoutClient({
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customer: values, items, coupon, saveAddress }),
+        body: JSON.stringify({
+          customer: values,
+          items,
+          coupon: coupon?.code || null,
+          saveAddress,
+          paymentMethod,
+        }),
       });
       const data = (await response.json().catch(() => null)) as
         | { url?: string; orderId?: string; error?: string }
@@ -162,14 +174,44 @@ export function CheckoutClient({
           </section>
           <section className="rounded-[2rem] bg-white p-6 md:p-8">
             <SectionTitle number="3" color="bg-yellow text-ink" title="Плащане" />
-            <div className="flex items-center justify-between rounded-2xl border-2 border-turquoise bg-mint p-4">
-              <span className="flex items-center gap-3 font-black">
-                <CreditCard /> Банкова карта със Stripe
-              </span>
-              <Check size={20} />
+            <div className="grid gap-3">
+              <button
+                type="button"
+                onClick={() => setPaymentMethod("CARD")}
+                className={`flex items-center justify-between rounded-2xl border-2 p-4 text-left ${
+                  paymentMethod === "CARD" ? "border-turquoise bg-mint" : "border-ink/10"
+                }`}
+              >
+                <span className="flex items-center gap-3 font-black">
+                  <CreditCard /> Банкова карта със Stripe
+                </span>
+                {paymentMethod === "CARD" && <Check size={20} />}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPaymentMethod("CASH_ON_DELIVERY")}
+                className={`flex items-center justify-between rounded-2xl border-2 p-4 text-left ${
+                  paymentMethod === "CASH_ON_DELIVERY"
+                    ? "border-turquoise bg-mint"
+                    : "border-ink/10"
+                }`}
+              >
+                <span className="flex items-center gap-3 font-black">
+                  <Banknote /> Наложен платеж
+                </span>
+                {paymentMethod === "CASH_ON_DELIVERY" && <Check size={20} />}
+              </button>
             </div>
             <p className="mt-4 flex items-center gap-2 text-xs font-bold text-ink/45">
-              <LockKeyhole size={14} /> Данните за картата се обработват защитено от Stripe.
+              {paymentMethod === "CARD" ? (
+                <>
+                  <LockKeyhole size={14} /> Данните за картата се обработват защитено от Stripe.
+                </>
+              ) : (
+                <>
+                  <Banknote size={14} /> Плащате на куриера при получаване на поръчката.
+                </>
+              )}
             </p>
           </section>
         </div>
@@ -197,7 +239,12 @@ export function CheckoutClient({
             disabled={loading || !items.length}
             className="mt-6 w-full bg-yellow text-ink hover:bg-yellow-dark"
           >
-            {loading ? "Подготвяме..." : "Плати сигурно"} <LockKeyhole size={17} />
+            {loading
+              ? "Подготвяме..."
+              : paymentMethod === "CARD"
+                ? "Плати сигурно"
+                : "Завърши поръчката"}{" "}
+            {paymentMethod === "CARD" ? <LockKeyhole size={17} /> : <Banknote size={17} />}
           </Button>
           <p className="mt-4 text-center text-xs text-white/40">
             С поръчката приемате общите условия.

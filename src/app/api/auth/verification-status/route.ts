@@ -8,7 +8,10 @@ export async function POST(request: Request) {
 
   const user = await db.user.findUnique({
     where: { email: parsed.data.email },
-    select: { emailVerified: true },
+    select: { emailVerified: true, blocked: true },
   });
-  return NextResponse.json({ requiresVerification: user?.emailVerified === false });
+  return NextResponse.json({
+    requiresVerification: user?.emailVerified === false,
+    blocked: user?.blocked === true,
+  });
 }

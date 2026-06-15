@@ -14,13 +14,13 @@ type CartState = {
   items: CartItem[];
   wishlist: string[];
   wishlistUserId: string | null;
-  coupon: string | null;
+  coupon: { code: string; type: "percent" | "fixed"; value: number } | null;
   addItem: (product: Product, quantity?: number, variant?: string) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   toggleWishlist: (id: string) => void;
   setWishlistContext: (userId: string | null, productIds: string[]) => void;
-  applyCoupon: (code: string) => boolean;
+  setCoupon: (coupon: CartState["coupon"]) => void;
   clearCart: () => void;
 };
 
@@ -76,13 +76,18 @@ export const useCart = create<CartState>()(
           set({ wishlistUserId: null });
         }
       },
-      applyCoupon: (code) => {
-        const valid = ["DECHKO10", "WELCOME"].includes(code.trim().toUpperCase());
-        if (valid) set({ coupon: code.trim().toUpperCase() });
-        return valid;
-      },
+      setCoupon: (coupon) => set({ coupon }),
       clearCart: () => set({ items: [], coupon: null }),
     }),
-    { name: "dechko-cart-v1" },
+    {
+      name: "dechko-cart-v1",
+      version: 2,
+      migrate: (persistedState, version) => {
+        if (version < 2 && persistedState && typeof persistedState === "object") {
+          return { ...persistedState, coupon: null };
+        }
+        return persistedState as CartState;
+      },
+    },
   ),
 );
