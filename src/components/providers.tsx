@@ -2,9 +2,25 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { useCart } from "@/store/cart";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({
+  children,
+  userId,
+  wishlist,
+}: {
+  children: React.ReactNode;
+  userId: string | null;
+  wishlist: string[];
+}) {
   const pathname = usePathname();
+  const setWishlistContext = useCart((state) => state.setWishlistContext);
+
+  useEffect(() => {
+    setWishlistContext(userId, wishlist);
+  }, [setWishlistContext, userId, wishlist]);
+
   return (
     <AnimatePresence mode="wait">
       <motion.div

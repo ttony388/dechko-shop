@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { Providers } from "@/components/providers";
+import { db } from "@/lib/db";
 import "./globals.css";
 
 const nunito = Nunito({ subsets: ["latin", "cyrillic"], variable: "--font-nunito", display: "swap" });
@@ -32,22 +33,40 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const session = await auth();
+  const [currentUser, wishlist] = session?.user
+    ? await Promise.all([
+        db.user.findUnique({
+          where: { id: session.user.id },
+          select: { name: true, email: true, role: true },
+        }),
+        db.wishlist.findMany({
+          where: { userId: session.user.id },
+          select: { productId: true },
+          orderBy: { createdAt: "asc" },
+        }),
+      ])
+    : [null, []];
 
   return (
     <html lang="bg">
       <body className={nunito.variable}>
         <Header
           user={
-            session?.user
+            currentUser
               ? {
-                  name: session.user.name,
-                  email: session.user.email,
-                  role: session.user.role,
+                  name: currentUser.name,
+                  email: currentUser.email,
+                  role: currentUser.role,
                 }
               : null
           }
         />
-        <Providers><main>{children}</main></Providers>
+        <Providers
+          userId={session?.user?.id || null}
+          wishlist={wishlist.map((item) => item.productId)}
+        >
+          <main>{children}</main>
+        </Providers>
         <Footer />
       </body>
     </html>

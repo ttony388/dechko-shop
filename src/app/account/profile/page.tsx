@@ -1,3 +1,20 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-export default function ProfilePage() { return <section className="rounded-[1.8rem] bg-white p-6 md:p-8"><h2 className="mb-6 text-2xl font-black">Лични данни</h2><form className="grid max-w-2xl gap-4 sm:grid-cols-2"><label><span className="field-label">Име</span><Input defaultValue="Мария" /></label><label><span className="field-label">Фамилия</span><Input defaultValue="Иванова" /></label><label className="sm:col-span-2"><span className="field-label">Имейл</span><Input type="email" defaultValue="maria@example.com" /></label><Button className="mt-2 w-fit">Запази</Button></form></section>; }
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import { ProfileForm } from "@/components/profile-form";
+import { splitName } from "@/lib/account";
+import { db } from "@/lib/db";
+
+export default async function ProfilePage() {
+  const session = await auth();
+  if (!session) redirect("/login");
+  const user = await db.user.findUniqueOrThrow({
+    where: { id: session.user.id },
+    select: { name: true, email: true },
+  });
+  return (
+    <section className="rounded-[1.8rem] bg-white p-6 md:p-8">
+      <h2 className="mb-6 text-2xl font-black">Лични данни</h2>
+      <ProfileForm initialProfile={{ ...splitName(user.name), email: user.email }} />
+    </section>
+  );
+}

@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { createHash, randomBytes } from "node:crypto";
 import { POST as register } from "../src/app/api/auth/register/route";
 import { POST as resend } from "../src/app/api/auth/resend-verification/route";
+import { createCheckoutOrder } from "../src/lib/checkout";
 import { authenticateCredentials } from "../src/lib/authenticate";
 import { getCatalogPage } from "../src/lib/catalog";
 import { db } from "../src/lib/db";
@@ -18,6 +19,7 @@ let userId = "";
 let deliveryFailureUserId = "";
 let recoveryUserId = "";
 let productId = "";
+const orderIds: string[] = [];
 
 async function main() {
   const registration = await register(new Request("http://localhost/api/auth/register", {
@@ -30,6 +32,12 @@ async function main() {
   userId = user.id;
   assert.equal(user.emailVerified, false);
   assert.notEqual(user.password, password, "password must be hashed");
+  const emptyAccountCounts = await Promise.all([
+    db.order.count({ where: { userId } }),
+    db.wishlist.count({ where: { userId } }),
+    db.address.count({ where: { userId } }),
+  ]);
+  assert.deepEqual(emptyAccountCounts, [0, 0, 0], "a new account should start empty");
 
   const duplicate = await register(new Request("http://localhost/api/auth/register", {
     method: "POST",
@@ -165,6 +173,61 @@ async function main() {
   const agePage = await getCatalogPage({ ageGroup: "3-5 г.", limit: 12 });
   assert.ok(agePage.products.every((item) => item.ages.includes("3-5 г.")));
 
+  const checkoutResponse = await createCheckoutOrder(
+    {
+      customer: {
+        email: "guest@example.com",
+        firstName: "Тест",
+        lastName: "Клиент",
+        phone: "0888123456",
+        address: "ул. Тест 1",
+        city: "София",
+        postalCode: "1000",
+      },
+      items: [{ product: { id: productId }, quantity: 2 }],
+      saveAddress: false,
+    },
+    null,
+  );
+  assert.equal(checkoutResponse.status, 200, "checkout should create an order");
+  const checkoutBody = await checkoutResponse.json() as { orderId: string };
+  const savedOrder = await db.order.findUniqueOrThrow({
+    where: { number: checkoutBody.orderId },
+    include: { items: true },
+  });
+  orderIds.push(savedOrder.id);
+  assert.equal(savedOrder.items.length, 1);
+  assert.equal(savedOrder.items[0].quantity, 2);
+
+  const accountCheckoutResponse = await createCheckoutOrder(
+    {
+      customer: {
+        email,
+        firstName: "Smoke",
+        lastName: "Test",
+        phone: "0888123456",
+        address: "ул. Профил 2",
+        city: "София",
+        postalCode: "1000",
+      },
+      items: [{ product: { id: productId }, quantity: 1 }],
+      saveAddress: true,
+    },
+    userId,
+  );
+  assert.equal(accountCheckoutResponse.status, 200);
+  const accountCheckoutBody = await accountCheckoutResponse.json() as { orderId: string };
+  const accountOrder = await db.order.findUniqueOrThrow({
+    where: { number: accountCheckoutBody.orderId },
+  });
+  orderIds.push(accountOrder.id);
+  assert.equal(accountOrder.userId, userId);
+  assert.equal(await db.order.count({ where: { userId } }), 1);
+  const defaultAddress = await db.address.findFirstOrThrow({
+    where: { userId, isDefault: true },
+  });
+  assert.equal(defaultAddress.line1, "ул. Профил 2");
+
   await db.product.update({
     where: { id: productId },
     data: { status: "ARCHIVED", active: false },
@@ -177,6 +240,9 @@ async function main() {
 
 main()
   .finally(async () => {
+    if (orderIds.length) {
+      await db.order.deleteMany({ where: { id: { in: orderIds } } }).catch(() => undefined);
+    }
     if (productId) await db.product.delete({ where: { id: productId } }).catch(() => undefined);
     if (deliveryFailureUserId) {
       await db.user.delete({ where: { id: deliveryFailureUserId } }).catch(() => undefined);

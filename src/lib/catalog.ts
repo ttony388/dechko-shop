@@ -157,9 +157,13 @@ function mapProduct(product: DbProduct): Product {
     slug: product.slug,
     category: product.category.name,
     categorySlug: product.category.slug,
-    price: Number(product.price),
+    price: Number(product.salePrice || product.price),
     salePrice: product.salePrice ? Number(product.salePrice) : undefined,
-    compareAt: product.compareAt ? Number(product.compareAt) : undefined,
+    compareAt: product.compareAt
+      ? Number(product.compareAt)
+      : product.salePrice
+        ? Number(product.price)
+        : undefined,
     rating: Number(rating.toFixed(1)),
     reviews: ratings.length,
     stock: product.stock,
