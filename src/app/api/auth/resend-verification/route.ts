@@ -4,6 +4,7 @@ import { resendVerificationSchema } from "@/lib/auth-validation";
 import {
   canResendVerification,
   createVerificationToken,
+  isEmailVerificationRequired,
   sendVerificationEmail,
 } from "@/lib/email-verification";
 
@@ -20,6 +21,15 @@ export async function POST(request: Request) {
   if (!user || user.emailVerified) {
     return NextResponse.json({
       message: "Ако профилът очаква потвърждение, изпратихме нов линк.",
+    });
+  }
+  if (!isEmailVerificationRequired()) {
+    await db.$transaction([
+      db.user.update({ where: { id: user.id }, data: { emailVerified: true } }),
+      db.verificationToken.deleteMany({ where: { userId: user.id } }),
+    ]);
+    return NextResponse.json({
+      message: "Профилът е активиран. Вече можете да влезете.",
     });
   }
   if (!(await canResendVerification(user.id))) {

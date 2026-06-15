@@ -23,6 +23,7 @@ type RegistrationState = {
   email: string;
   emailSent: boolean;
   existing: boolean;
+  verificationRequired: boolean;
 };
 
 function getSchema(mode: "login" | "register") {
@@ -74,6 +75,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
           email?: string;
           emailSent?: boolean;
           requiresVerification?: boolean;
+          verificationRequired?: boolean;
         } | null;
         if (!response.ok) {
           if (body?.requiresVerification && body.email) {
@@ -81,16 +83,30 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
               email: body.email,
               emailSent: false,
               existing: true,
+              verificationRequired: true,
             });
             return;
           }
           setServerError(body?.error || "Регистрацията не беше успешна.");
           return;
         }
+        if (body?.verificationRequired === false) {
+          const result = await signIn("credentials", {
+            email: values.email,
+            password: values.password,
+            redirect: false,
+          });
+          if (!result?.error) {
+            router.replace("/account");
+            router.refresh();
+            return;
+          }
+        }
         setRegistrationState({
           email: body?.email || values.email,
           emailSent: body?.emailSent !== false,
           existing: false,
+          verificationRequired: body?.verificationRequired !== false,
         });
       } catch {
         setServerError("Връзката с услугата за регистрация беше прекъсната. Моля, опитайте отново.");
@@ -125,7 +141,8 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
   }
 
   if (registrationState) {
-    const needsResend = !registrationState.emailSent;
+    const needsResend = registrationState.verificationRequired && !registrationState.emailSent;
+    const isActive = !registrationState.verificationRequired;
     return (
       <div className="rounded-[1.8rem] bg-mint p-6 text-center">
         {needsResend ? (
@@ -138,19 +155,31 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
             ? registrationState.existing
               ? "Профилът очаква потвърждение"
               : "Профилът е създаден"
-            : "Проверете пощата си"}
+            : isActive
+              ? "Профилът е активен"
+              : "Проверете пощата си"}
         </h2>
         <p className="mt-2 text-sm font-semibold leading-6 text-ink/65">
           {needsResend
             ? "Не успяхме да доставим линка за потвърждение. Изпратете нов линк, за да активирате профила си."
-            : "Регистрацията е успешна! Изпратихме линк за потвърждение на вашия имейл."}
+            : isActive
+              ? "Регистрацията е успешна. Можете да влезете с новия си профил."
+              : "Регистрацията е успешна! Изпратихме линк за потвърждение на вашия имейл."}
         </p>
         <p className="mt-2 text-sm font-black">{registrationState.email}</p>
         <Link
-          href={`/verify-email?email=${encodeURIComponent(registrationState.email)}`}
+          href={
+            isActive
+              ? "/login"
+              : `/verify-email?email=${encodeURIComponent(registrationState.email)}`
+          }
           className="mt-5 inline-flex h-11 items-center rounded-full bg-ink px-5 text-sm font-black text-white"
         >
-          {needsResend ? "Изпрати линк за потвърждение" : "Изпрати нов линк"}
+          {isActive
+            ? "Вход в профила"
+            : needsResend
+              ? "Изпрати линк за потвърждение"
+              : "Изпрати нов линк"}
         </Link>
       </div>
     );

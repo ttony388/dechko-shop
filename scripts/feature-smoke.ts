@@ -11,10 +11,12 @@ import { createVerificationToken, verifyEmailToken } from "../src/lib/email-veri
 const stamp = Date.now();
 const email = `codex-smoke-${stamp}@example.com`;
 const deliveryFailureEmail = `codex-smoke-email-failure-${stamp}@example.com`;
+const recoveryEmail = `codex-smoke-recovery-${stamp}@example.com`;
 const password = "SmokeTest123!";
 const slug = `codex-smoke-product-${stamp}`;
 let userId = "";
 let deliveryFailureUserId = "";
+let recoveryUserId = "";
 let productId = "";
 
 async function main() {
@@ -61,13 +63,37 @@ async function main() {
     );
     const registrationWithoutEmailBody = await registrationWithoutEmail.json() as {
       emailSent?: boolean;
+      verificationRequired?: boolean;
     };
     assert.equal(registrationWithoutEmailBody.emailSent, false);
+    assert.equal(registrationWithoutEmailBody.verificationRequired, false);
     const deliveryFailureUser = await db.user.findUniqueOrThrow({
       where: { email: deliveryFailureEmail },
     });
     deliveryFailureUserId = deliveryFailureUser.id;
-    assert.equal(deliveryFailureUser.emailVerified, false);
+    assert.equal(deliveryFailureUser.emailVerified, true);
+    assert.equal(
+      (await authenticateCredentials({ email: deliveryFailureEmail, password })).status,
+      "ok",
+    );
+
+    const recoveryUser = await db.user.create({
+      data: {
+        name: "Stuck Registration",
+        email: recoveryEmail,
+        emailVerified: false,
+      },
+    });
+    recoveryUserId = recoveryUser.id;
+    const recoveredRegistration = await register(new Request("http://localhost/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ name: "Recovered Registration", email: recoveryEmail, password }),
+    }));
+    assert.equal(recoveredRegistration.status, 201, "an unverified profile should be recoverable");
+    assert.equal(
+      (await authenticateCredentials({ email: recoveryEmail, password })).status,
+      "ok",
+    );
   } finally {
     if (previousNodeEnv === undefined) delete mutableEnv.NODE_ENV;
     else mutableEnv.NODE_ENV = previousNodeEnv;
@@ -154,6 +180,9 @@ main()
     if (productId) await db.product.delete({ where: { id: productId } }).catch(() => undefined);
     if (deliveryFailureUserId) {
       await db.user.delete({ where: { id: deliveryFailureUserId } }).catch(() => undefined);
+    }
+    if (recoveryUserId) {
+      await db.user.delete({ where: { id: recoveryUserId } }).catch(() => undefined);
     }
     if (userId) await db.user.delete({ where: { id: userId } }).catch(() => undefined);
     await db.$disconnect();

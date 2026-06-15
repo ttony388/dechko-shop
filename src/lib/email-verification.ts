@@ -12,6 +12,13 @@ function getAppUrl() {
   return (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").replace(/\/$/, "");
 }
 
+export function isEmailVerificationRequired() {
+  return (
+    process.env.NODE_ENV !== "production" ||
+    Boolean(process.env.RESEND_API_KEY && process.env.EMAIL_FROM)
+  );
+}
+
 export async function createVerificationToken(userId: string) {
   const token = randomBytes(32).toString("hex");
   const tokenHash = hashToken(token);
