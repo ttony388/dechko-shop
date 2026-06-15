@@ -32,22 +32,28 @@ export const useCart = create<CartState>()(
       wishlistUserId: null,
       coupon: null,
       addItem: (product, quantity = 1, variant) => {
+        if (product.stock <= 0) return;
         const current = get().items.find((item) => item.product.id === product.id && item.variant === variant);
+        const nextQuantity = Math.min(product.stock, (current?.quantity || 0) + quantity);
         set({
           items: current
             ? get().items.map((item) =>
                 item.product.id === product.id && item.variant === variant
-                  ? { ...item, quantity: item.quantity + quantity }
+                  ? { ...item, quantity: nextQuantity }
                   : item,
               )
-            : [...get().items, { product, quantity, variant }],
+            : [...get().items, { product, quantity: Math.min(product.stock, quantity), variant }],
         });
       },
       removeItem: (id) => set({ items: get().items.filter((item) => item.product.id !== id) }),
       updateQuantity: (id, quantity) =>
         set({
           items: get().items
-            .map((item) => (item.product.id === id ? { ...item, quantity } : item))
+            .map((item) =>
+              item.product.id === id
+                ? { ...item, quantity: Math.min(item.product.stock, quantity) }
+                : item,
+            )
             .filter((item) => item.quantity > 0),
         }),
       toggleWishlist: (id) => {

@@ -23,7 +23,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   if (!product) notFound();
   const products = await getCatalogProducts();
   const related = products.filter((item) => item.categorySlug === product.categorySlug && item.id !== product.id).slice(0, 4);
-  const jsonLd = { "@context": "https://schema.org", "@type": "Product", name: product.name, image: product.image, description: product.description, offers: { "@type": "Offer", priceCurrency: "EUR", price: product.price, availability: "https://schema.org/InStock" }, aggregateRating: { "@type": "AggregateRating", ratingValue: product.rating, reviewCount: product.reviews } };
+  const jsonLd = { "@context": "https://schema.org", "@type": "Product", name: product.name, image: product.image, description: product.description, offers: { "@type": "Offer", priceCurrency: "EUR", price: product.price, availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock" }, aggregateRating: { "@type": "AggregateRating", ratingValue: product.rating, reviewCount: product.reviews } };
   return (
     <div className="container-shell py-8 md:py-14">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />

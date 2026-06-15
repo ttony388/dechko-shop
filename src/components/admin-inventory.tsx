@@ -6,19 +6,27 @@ import { Input } from "@/components/ui/input";
 
 type InventoryRow = { id: string; name: string; sku: string; stock: number; category: string };
 
-export function AdminInventory({ initialProducts }: { initialProducts: InventoryRow[] }) {
+export function AdminInventory({
+  initialProducts,
+  initialLowStockOnly = false,
+}: {
+  initialProducts: InventoryRow[];
+  initialLowStockOnly?: boolean;
+}) {
   const [products, setProducts] = useState(initialProducts);
   const [drafts, setDrafts] = useState<Record<string, number>>({});
   const [search, setSearch] = useState("");
+  const [lowStockOnly, setLowStockOnly] = useState(initialLowStockOnly);
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
     return products.filter(
       (product) =>
-        !query ||
-        product.name.toLowerCase().includes(query) ||
-        product.sku.toLowerCase().includes(query),
+        (!lowStockOnly || product.stock <= 7) &&
+        (!query ||
+          product.name.toLowerCase().includes(query) ||
+          product.sku.toLowerCase().includes(query)),
     );
-  }, [products, search]);
+  }, [lowStockOnly, products, search]);
 
   async function save(product: InventoryRow) {
     const stock = drafts[product.id] ?? product.stock;
@@ -46,10 +54,20 @@ export function AdminInventory({ initialProducts }: { initialProducts: Inventory
     <section className="overflow-hidden rounded-[1.6rem] bg-white">
       <div className="flex flex-wrap items-center justify-between gap-4 p-6">
         <div><h2 className="text-2xl font-black">Наличности</h2><p className="mt-1 text-sm font-bold text-ink/45">{filtered.length} продукта</p></div>
-        <label className="relative w-full max-w-md">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-ink/35" size={17} />
-          <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Търси по име или SKU..." className="pl-11" />
-        </label>
+        <div className="flex w-full max-w-2xl flex-wrap items-center justify-end gap-3">
+          <label className="relative min-w-[240px] flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-ink/35" size={17} />
+            <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Търси по име или SKU..." className="pl-11" />
+          </label>
+          <select
+            value={lowStockOnly ? "low" : "all"}
+            onChange={(event) => setLowStockOnly(event.target.value === "low")}
+            className="h-12 rounded-2xl border border-ink/10 bg-white px-4 text-sm font-black outline-none"
+          >
+            <option value="all">Всички наличности</option>
+            <option value="low">Само ниска наличност</option>
+          </select>
+        </div>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[700px] text-left text-sm">
@@ -65,13 +83,18 @@ export function AdminInventory({ initialProducts }: { initialProducts: Inventory
                   <td className="px-6 py-4 font-semibold text-ink/50">{product.sku}</td>
                   <td className="px-6 py-4 font-semibold text-ink/55">{product.category}</td>
                   <td className="px-6 py-4"><Input type="number" min="0" value={stock} onChange={(event) => setDrafts((current) => ({ ...current, [product.id]: Number(event.target.value) }))} className="w-24" /></td>
-                  <td className="px-6 py-4"><span className={`rounded-full px-3 py-1 text-xs font-black ${stock <= 7 ? "bg-coral/10 text-coral" : "bg-lime/20"}`}>{stock <= 7 ? "Ниска" : "Наличен"}</span></td>
+                  <td className="px-6 py-4"><span className={`rounded-full px-3 py-1 text-xs font-black ${stock <= 7 ? "bg-coral/10 text-coral" : "bg-lime/20"}`}>{stock === 0 ? "Изчерпан" : stock <= 7 ? "Ниска" : "Наличен"}</span></td>
                   <td className="px-6 py-4"><button onClick={() => save(product)} disabled={drafts[product.id] === undefined} className="disabled:opacity-25" aria-label="Запази"><Save size={18} /></button></td>
                 </tr>
               );
             })}
           </tbody>
         </table>
+        {!filtered.length && (
+          <p className="p-10 text-center font-bold text-ink/45">
+            {lowStockOnly ? "Няма продукти с ниска наличност." : "Няма намерени продукти."}
+          </p>
+        )}
       </div>
     </section>
   );

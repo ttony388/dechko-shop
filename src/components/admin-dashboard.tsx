@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ArrowUpRight, CircleDollarSign, Package, ShoppingCart, Users, X } from "lucide-react";
 import { useState } from "react";
 import {
@@ -123,6 +124,14 @@ export function AdminDashboard({
                   <span className="font-black text-coral">{product.stock} бр.</span>
                 </div>
               ))}
+            </div>
+            <div className="mt-5 flex justify-end">
+              <Link
+                href="/admin/inventory?filter=low"
+                className="inline-flex h-11 items-center justify-center rounded-full bg-ink px-6 text-sm font-black text-white"
+              >
+                Наличности
+              </Link>
             </div>
           </div>
         </div>

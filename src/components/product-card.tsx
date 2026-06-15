@@ -12,6 +12,7 @@ export function ProductCard({ product }: { product: Product }) {
   const addItem = useCart((state) => state.addItem);
   const toggleWishlist = useCart((state) => state.toggleWishlist);
   const wished = useCart((state) => state.wishlist.includes(product.id));
+  const outOfStock = product.stock === 0;
 
   return (
     <motion.article
@@ -33,6 +34,7 @@ export function ProductCard({ product }: { product: Product }) {
         </Link>
         <div className="absolute left-3 top-3 flex gap-2">
           {product.badge && <span className="rounded-full bg-white px-3 py-1.5 text-[11px] font-black shadow-soft">{product.badge}</span>}
+          {outOfStock && <span className="rounded-full bg-coral px-3 py-1.5 text-[11px] font-black text-white shadow-soft">Не е налично</span>}
         </div>
         <button
           onClick={() => toggleWishlist(product.id)}
@@ -43,8 +45,9 @@ export function ProductCard({ product }: { product: Product }) {
         </button>
         <button
           onClick={() => addItem(product)}
-          className="absolute bottom-3 right-3 grid h-12 w-12 translate-y-2 place-items-center rounded-full bg-ink text-white opacity-0 shadow-lg transition group-hover:translate-y-0 group-hover:opacity-100 focus:translate-y-0 focus:opacity-100"
-          aria-label={`Добави ${product.name} в количката`}
+          disabled={outOfStock}
+          className="absolute bottom-3 right-3 grid h-12 w-12 translate-y-2 place-items-center rounded-full bg-ink text-white opacity-0 shadow-lg transition group-hover:translate-y-0 group-hover:opacity-100 focus:translate-y-0 focus:opacity-100 disabled:cursor-not-allowed disabled:bg-ink/35"
+          aria-label={outOfStock ? `${product.name} не е наличен` : `Добави ${product.name} в количката`}
         >
           <Plus />
         </button>
@@ -59,6 +62,7 @@ export function ProductCard({ product }: { product: Product }) {
           <span className="font-black">{formatPrice(product.price)}</span>
           {product.compareAt && <span className="text-sm text-ink/35 line-through">{formatPrice(product.compareAt)}</span>}
         </div>
+        {outOfStock && <p className="mt-2 text-xs font-black text-coral">Не е налично</p>}
       </div>
     </motion.article>
   );
