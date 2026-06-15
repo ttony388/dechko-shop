@@ -1,0 +1,915 @@
+
+> dechko-shop@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3000
+   - Network:      http://172.25.160.1:3000
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1876ms
+ ○ Compiling / ...
+ ✓ Compiled / in 5.6s (1804 modules)
+ GET / 200 in 6643ms
+ ✓ Compiled in 1251ms (696 modules)
+ ○ Compiling /wishlist ...
+ ✓ Compiled /wishlist in 3.1s (1968 modules)
+ GET /register 200 in 3723ms
+ GET /wishlist 200 in 3615ms
+ ✓ Compiled /manifest.webmanifest in 436ms (1978 modules)
+ GET /manifest.webmanifest 200 in 618ms
+ ✓ Compiled /favicon.ico in 290ms (1208 modules)
+ GET /favicon.ico 200 in 391ms
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 1433ms (2001 modules)
+ GET /admin 200 in 1731ms
+ GET /admin 200 in 149ms
+ GET /admin 200 in 90ms
+ GET /manifest.webmanifest 200 in 24ms
+ ✓ Compiled in 274ms (788 modules)
+ GET / 200 in 682ms
+ GET /admin 200 in 668ms
+ GET /manifest.webmanifest 200 in 24ms
+ GET /register 200 in 166ms
+ GET / 200 in 319ms
+ ✓ Compiled /apple-icon.png in 268ms (1229 modules)
+ GET /apple-icon.png 200 in 315ms
+ ○ Compiling /admin/products ...
+ ✓ Compiled /admin/products in 532ms (2017 modules)
+ GET /admin 200 in 257ms
+ GET /manifest.webmanifest 200 in 21ms
+ GET /admin/products 200 in 860ms
+ GET / 200 in 444ms
+ GET /admin 200 in 43ms
+ GET /manifest.webmanifest 200 in 18ms
+ ✓ Compiled /admin/[section] in 468ms (2019 modules)
+ GET /admin/analytics 200 in 1411ms
+ GET /manifest.webmanifest 200 in 19ms
+ GET /admin/inventory 200 in 58ms
+ GET /manifest.webmanifest 200 in 19ms
+ GET /admin/coupons 200 in 58ms
+ GET /manifest.webmanifest 200 in 21ms
+ GET /admin/coupons 200 in 116ms
+ GET /manifest.webmanifest 200 in 27ms
+ GET /admin/customers 200 in 59ms
+ GET /manifest.webmanifest 200 in 29ms
+ ✓ Compiled in 271ms (792 modules)
+ GET /admin/customers 200 in 294ms
+ GET / 200 in 211ms
+ GET /manifest.webmanifest 200 in 20ms
+ GET /favicon.ico 200 in 21ms
+ GET /apple-icon.png 200 in 40ms
+ GET /favicon.ico 200 in 50ms
+ GET /manifest.webmanifest 200 in 52ms
+ GET /admin/orders 200 in 51ms
+ GET /manifest.webmanifest 200 in 17ms
+ GET /admin/categories 200 in 57ms
+ GET /manifest.webmanifest 200 in 18ms
+ GET /admin/products 200 in 126ms
+ GET /manifest.webmanifest 200 in 22ms
+ GET / 200 in 415ms
+ GET /apple-icon.png 200 in 16ms
+ GET /manifest.webmanifest 200 in 70ms
+ GET / 200 in 781ms
+ GET / 200 in 421ms
+ ○ Compiling /account ...
+ ✓ Compiled /account in 1650ms (1938 modules)
+ GET /account 200 in 2380ms
+ GET /account 200 in 177ms
+ GET / 200 in 744ms
+ ✓ Compiled in 1243ms (792 modules)
+ GET / 200 in 830ms
+ ✓ Compiled in 3.8s (1929 modules)
+ GET / 200 in 422ms
+ GET / 200 in 1552ms
+ ○ Compiling /apple-icon.png ...
+ ✓ Compiled /apple-icon.png in 1052ms (1142 modules)
+ GET /apple-icon.png 200 in 1283ms
+ ✓ Compiled /account in 397ms (1151 modules)
+ GET /account 200 in 809ms
+ GET / 200 in 516ms
+ GET /account 200 in 569ms
+ GET /apple-icon.png 200 in 41ms
+ ○ Compiling /manifest.webmanifest ...
+ ✓ Compiled /manifest.webmanifest in 769ms (1157 modules)
+ GET /manifest.webmanifest 200 in 995ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 701ms (1937 modules)
+ GET /api/auth/csrf 200 in 1882ms
+ POST /api/auth/signout 200 in 36ms
+ GET / 200 in 617ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 1208ms (2028 modules)
+ GET /login 200 in 1420ms
+ ✓ Compiled in 266ms (792 modules)
+ ✓ Compiled in 1069ms (792 modules)
+ ✓ Compiled in 616ms (792 modules)
+ GET /login 200 in 1237ms
+ ✓ Compiled in 340ms (792 modules)
+ GET / 200 in 2068ms
+ GET /login 200 in 410ms
+ GET / 200 in 1112ms
+ GET /login 200 in 189ms
+ GET / 200 in 598ms
+ GET /login 200 in 264ms
+ ✓ Compiled in 225ms (792 modules)
+ GET / 200 in 480ms
+ GET /login 200 in 409ms
+ ✓ Compiled in 270ms (792 modules)
+ GET / 200 in 518ms
+ GET / 200 in 103ms
+ GET /login 200 in 57ms
+ ✓ Compiled in 204ms (792 modules)
+ GET /login 200 in 79ms
+ GET / 200 in 159ms
+ ✓ Compiled in 207ms (792 modules)
+ GET /login 200 in 142ms
+ GET / 200 in 155ms
+ ✓ Compiled in 271ms (792 modules)
+ GET /login 200 in 312ms
+ GET / 200 in 331ms
+ ✓ Compiled in 202ms (792 modules)
+ ✓ Compiled in 258ms (792 modules)
+ GET /login 200 in 155ms
+ GET / 200 in 435ms
+ GET /login 200 in 60ms
+ GET / 200 in 182ms
+ ✓ Compiled in 177ms (792 modules)
+ GET /login 200 in 67ms
+ GET / 200 in 135ms
+ ✓ Compiled in 229ms (792 modules)
+ ✓ Compiled in 338ms (792 modules)
+ GET /login 200 in 740ms
+ ✓ Compiled in 460ms (792 modules)
+ ✓ Compiled in 553ms (792 modules)
+ GET /login 200 in 821ms
+ GET / 200 in 1404ms
+ ✓ Compiled in 545ms (792 modules)
+ GET /login 200 in 794ms
+ GET / 200 in 1601ms
+ ✓ Compiled in 519ms (792 modules)
+ GET /login 200 in 700ms
+ GET / 200 in 1650ms
+ GET /login 200 in 418ms
+ GET / 200 in 1291ms
+ ✓ Compiled in 500ms (792 modules)
+ GET / 200 in 1220ms
+ GET /login 200 in 566ms
+ GET / 200 in 821ms
+ GET / 200 in 169ms
+ GET /login 200 in 81ms
+ GET /api/auth/providers 200 in 34ms
+ GET /api/auth/csrf 200 in 15ms
+ POST /api/auth/callback/credentials? 200 in 333ms
+ GET /account 200 in 71ms
+ GET /account 200 in 63ms
+ ✓ Compiled in 703ms (792 modules)
+ ✓ Compiled in 438ms (792 modules)
+ GET / 200 in 688ms
+ GET /account 200 in 963ms
+ GET / 200 in 1049ms
+ GET /account 200 in 91ms
+ GET / 200 in 242ms
+ ✓ Compiled in 182ms (792 modules)
+ GET / 200 in 76ms
+ GET /account 200 in 78ms
+ ○ Compiling /category/[slug] ...
+ ✓ Compiled /category/[slug] in 1148ms (2035 modules)
+ GET /category/outdoor 200 in 2145ms
+ GET /category/outdoor 200 in 65ms
+ ✓ Compiled in 205ms (797 modules)
+ ✓ Compiled in 293ms (797 modules)
+ ✓ Compiled in 367ms (797 modules)
+ GET /category/outdoor 200 in 629ms
+ GET / 200 in 853ms
+ GET /category/outdoor 200 in 255ms
+ GET / 200 in 627ms
+ GET /category/outdoor 200 in 88ms
+ GET / 200 in 261ms
+ GET / 200 in 50ms
+ GET /category/baby 200 in 60ms
+ GET /apple-icon.png 200 in 21ms
+ ○ Compiling /cart ...
+ ✓ Compiled /cart in 696ms (2036 modules)
+ GET /cart 200 in 1058ms
+ ✓ Compiled in 210ms (802 modules)
+ GET /cart 200 in 162ms
+ GET / 200 in 179ms
+ GET /apple-icon.png 200 in 27ms
+ ✓ Compiled in 488ms (802 modules)
+ ✓ Compiled in 709ms (802 modules)
+ GET /cart 200 in 1113ms
+ ✓ Compiled in 492ms (802 modules)
+ GET /cart 200 in 348ms
+ GET / 200 in 1381ms
+ GET /cart 200 in 133ms
+ GET / 200 in 708ms
+ GET / 200 in 223ms
+ ✓ Compiled in 216ms (802 modules)
+ GET /cart 200 in 76ms
+ GET / 200 in 146ms
+ ✓ Compiled in 206ms (802 modules)
+ GET / 200 in 76ms
+ ✓ Compiled in 216ms (802 modules)
+ GET / 200 in 76ms
+ ✓ Compiled in 200ms (802 modules)
+ GET / 200 in 81ms
+ ✓ Compiled in 202ms (802 modules)
+ GET / 200 in 143ms
+ ✓ Compiled in 212ms (802 modules)
+ ✓ Compiled in 276ms (802 modules)
+ ✓ Compiled in 274ms (802 modules)
+ GET / 200 in 643ms
+ GET / 200 in 374ms
+ GET / 200 in 96ms
+ ✓ Compiled in 204ms (802 modules)
+ ✓ Compiled in 287ms (802 modules)
+ GET / 200 in 502ms
+ ✓ Compiled in 255ms (802 modules)
+ GET / 200 in 405ms
+ GET / 200 in 97ms
+ ✓ Compiled in 281ms (802 modules)
+ ✓ Compiled in 814ms (802 modules)
+ ✓ Compiled in 616ms (802 modules)
+ ✓ Compiled in 721ms (802 modules)
+ GET / 200 in 2124ms
+ GET / 200 in 1738ms
+ ✓ Compiled in 394ms (802 modules)
+ GET / 200 in 1256ms
+ GET / 200 in 523ms
+ GET / 200 in 138ms
+ ✓ Compiled in 497ms (802 modules)
+ GET / 200 in 107ms
+ ✓ Compiled in 213ms (802 modules)
+ ✓ Compiled in 282ms (802 modules)
+ ✓ Compiled in 282ms (802 modules)
+ GET / 200 in 664ms
+ GET / 200 in 401ms
+ GET / 200 in 119ms
+ ✓ Compiled in 473ms (802 modules)
+ GET / 200 in 867ms
+ ✓ Compiled in 986ms (802 modules)
+ ✓ Compiled in 306ms (802 modules)
+ GET / 200 in 1400ms
+ GET / 200 in 415ms
+ GET / 200 in 104ms
+ GET / 200 in 52ms
+ GET /apple-icon.png 200 in 97ms
+ GET / 200 in 319ms
+ GET / 200 in 282ms
+ GET / 200 in 164ms
+ GET / 200 in 90ms
+ GET / 200 in 178ms
+ GET / 200 in 181ms
+ GET / 200 in 165ms
+ GET / 200 in 83ms
+ GET / 200 in 156ms
+ GET / 200 in 165ms
+ GET / 200 in 163ms
+ GET / 200 in 158ms
+ GET / 200 in 152ms
+ GET / 200 in 133ms
+ GET / 200 in 217ms
+ GET / 200 in 224ms
+ GET / 200 in 231ms
+ GET / 200 in 255ms
+ GET / 200 in 247ms
+ GET / 200 in 248ms
+ GET / 200 in 170ms
+ GET / 200 in 99ms
+ ✓ Compiled in 210ms (802 modules)
+ GET / 200 in 147ms
+ GET / 200 in 152ms
+ GET /apple-icon.png 200 in 16ms
+ ✓ Compiled in 231ms (802 modules)
+ GET / 200 in 166ms
+ GET / 200 in 163ms
+ ✓ Compiled in 220ms (802 modules)
+ GET / 200 in 137ms
+ GET / 200 in 142ms
+ ✓ Compiled in 219ms (802 modules)
+ ✓ Compiled in 354ms (802 modules)
+ GET / 200 in 536ms
+ GET / 200 in 532ms
+ GET / 200 in 178ms
+ GET / 200 in 177ms
+ GET /apple-icon.png 200 in 94ms
+ ✓ Compiled in 252ms (802 modules)
+ GET / 200 in 152ms
+ GET / 200 in 147ms
+ ✓ Compiled in 268ms (802 modules)
+ GET / 200 in 173ms
+ GET / 200 in 166ms
+ ✓ Compiled in 260ms (802 modules)
+ GET / 200 in 224ms
+ GET / 200 in 148ms
+ GET /apple-icon.png 200 in 20ms
+ ✓ Compiled in 391ms (802 modules)
+ GET / 200 in 200ms
+ GET / 200 in 118ms
+ GET /apple-icon.png 200 in 20ms
+ ✓ Compiled in 1347ms (802 modules)
+ ✓ Compiled in 2.5s (802 modules)
+ ○ Compiling /manifest.webmanifest ...
+ GET / 200 in 3764ms
+ GET / 200 in 3820ms
+ GET / 200 in 3422ms
+ GET / 200 in 1332ms
+ GET / 200 in 1004ms
+ ✓ Compiled /favicon.ico in 10.6s (2036 modules)
+ GET / 200 in 744ms
+ ✓ Compiled in 501ms (802 modules)
+ ✓ Compiled in 604ms (802 modules)
+ GET / 200 in 753ms
+ GET / 200 in 142ms
+ ✓ Compiled in 476ms (802 modules)
+ ✓ Compiled in 447ms (802 modules)
+ ✓ Compiled in 482ms (802 modules)
+ GET / 200 in 1039ms
+ GET / 200 in 610ms
+ GET / 200 in 128ms
+ ✓ Compiled in 509ms (802 modules)
+ ✓ Compiled in 486ms (802 modules)
+ GET / 200 in 649ms
+ GET / 200 in 159ms
+ ✓ Compiled in 316ms (802 modules)
+ GET / 200 in 123ms
+ ✓ Compiled in 368ms (802 modules)
+ ✓ Compiled in 497ms (802 modules)
+ GET / 200 in 640ms
+ GET / 200 in 139ms
+ ✓ Compiled in 293ms (802 modules)
+ GET / 200 in 100ms
+ ✓ Compiled in 289ms (802 modules)
+ GET / 200 in 153ms
+ ✓ Compiled in 286ms (802 modules)
+ ✓ Compiled in 372ms (802 modules)
+ ✓ Compiled in 382ms (802 modules)
+ GET / 200 in 892ms
+ GET / 200 in 522ms
+ GET / 200 in 141ms
+ ✓ Compiled in 989ms (802 modules)
+ ✓ Compiled in 1266ms (802 modules)
+ ✓ Compiled in 1503ms (802 modules)
+ GET /manifest.webmanifest 200 in 262ms
+ ✓ Compiled in 997ms (802 modules)
+ GET / 200 in 3857ms
+ ✓ Compiled in 457ms (802 modules)
+ GET / 200 in 3422ms
+ GET / 200 in 2984ms
+ ✓ Compiled in 586ms (802 modules)
+ GET / 200 in 2062ms
+ ✓ Compiled in 504ms (802 modules)
+ GET / 200 in 1633ms
+ ✓ Compiled in 424ms (802 modules)
+ GET / 200 in 1587ms
+ GET / 200 in 1051ms
+ GET / 200 in 528ms
+ GET / 200 in 125ms
+ GET /favicon.ico 200 in 343ms
+ ✓ Compiled in 520ms (802 modules)
+ ✓ Compiled in 501ms (802 modules)
+ ✓ Compiled in 987ms (802 modules)
+ GET /manifest.webmanifest 200 in 161ms
+ ✓ Compiled in 549ms (802 modules)
+ GET / 200 in 2164ms
+ ✓ Compiled in 508ms (802 modules)
+ GET / 200 in 2112ms
+ GET / 200 in 2214ms
+ ✓ Compiled in 462ms (802 modules)
+ GET / 200 in 1601ms
+ ✓ Compiled in 484ms (802 modules)
+ GET / 200 in 1600ms
+ ✓ Compiled in 923ms (802 modules)
+ GET / 200 in 1922ms
+ ✓ Compiled in 579ms (802 modules)
+ GET / 200 in 2077ms
+ ✓ Compiled in 770ms (802 modules)
+ GET / 200 in 2368ms
+ ✓ Compiled in 1120ms (802 modules)
+ GET / 200 in 2674ms
+ ✓ Compiled in 2s (802 modules)
+ GET / 200 in 4069ms
+ ✓ Compiled in 560ms (802 modules)
+ GET / 200 in 3797ms
+ ✓ Compiled in 516ms (802 modules)
+ GET / 200 in 3123ms
+ GET / 200 in 1214ms
+ GET / 200 in 680ms
+ GET / 200 in 160ms
+ ○ Compiling /admin/products ...
+ ✓ Compiled /admin/products in 895ms (1252 modules)
+ GET /admin/products 200 in 2498ms
+ GET /admin/products 200 in 1367ms
+ GET /admin/products 200 in 1353ms
+ GET /admin/products 200 in 1309ms
+ GET /admin/products 200 in 1234ms
+ GET /admin/products 200 in 1209ms
+ GET /admin/products 200 in 1487ms
+ GET /admin/products 200 in 1452ms
+ GET /admin/products 200 in 1508ms
+ GET /admin/products 200 in 1389ms
+ GET /admin/products 200 in 1830ms
+ ✓ Compiled in 631ms (802 modules)
+ GET /admin/products 200 in 2045ms
+ GET / 200 in 872ms
+ GET /admin/products 200 in 2148ms
+ GET /admin/products 200 in 2098ms
+ GET /admin/products 200 in 2129ms
+ GET /admin/products 200 in 1663ms
+ GET /admin/products 200 in 1425ms
+ GET /admin/products 200 in 1254ms
+ GET /admin/products 200 in 1192ms
+ GET /admin/products 200 in 1190ms
+ GET /admin/products 200 in 1165ms
+ GET /admin/products 200 in 1082ms
+ GET /admin/products 200 in 1108ms
+ GET /admin/products 200 in 1078ms
+ GET /admin/products 200 in 1088ms
+ GET /admin/products 200 in 1030ms
+ GET /admin/products 200 in 1050ms
+ GET /admin/products 200 in 966ms
+ GET /admin/products 200 in 1295ms
+ ✓ Compiled in 1173ms (802 modules)
+ GET /admin/products 200 in 2557ms
+ GET /admin/products 200 in 2837ms
+ GET / 200 in 787ms
+ GET /admin/products 200 in 2846ms
+ GET /admin/products 200 in 2851ms
+ GET /admin/products 200 in 2859ms
+ GET /admin/products 200 in 2688ms
+ GET /admin/products 200 in 1753ms
+ GET /admin/products 200 in 1524ms
+ GET /admin/products 200 in 1522ms
+ GET /admin/products 200 in 2016ms
+ GET /admin/products 200 in 1953ms
+ GET /admin/products 200 in 1754ms
+ GET /admin/products 200 in 1713ms
+ GET /admin/products 200 in 1930ms
+ ✓ Compiled in 477ms (802 modules)
+ GET /admin/products 200 in 2665ms
+ ✓ Compiled in 544ms (802 modules)
+ GET /admin/products 200 in 2235ms
+ GET / 200 in 826ms
+ GET / 200 in 322ms
+ GET /admin/products 200 in 2218ms
+ GET /admin/products 200 in 2182ms
+ GET /admin/products 200 in 2087ms
+ GET /admin/products 200 in 1913ms
+ GET /admin/products 200 in 1163ms
+ GET /admin/products 200 in 1069ms
+ GET /admin/products 200 in 1045ms
+ GET /admin/products 200 in 1084ms
+ GET /admin/products 200 in 1091ms
+ GET /admin/products 200 in 1097ms
+ GET /admin/products 200 in 1118ms
+ GET /admin/products 200 in 1106ms
+ GET /admin/products 200 in 1118ms
+ GET /admin/products 200 in 1070ms
+ GET /admin/products 200 in 1064ms
+ GET /admin/products 200 in 1002ms
+ GET /admin/products 200 in 1016ms
+ GET /admin/products 200 in 1032ms
+ GET /admin/products 200 in 1060ms
+ ✓ Compiled in 500ms (802 modules)
+ GET /admin/products 200 in 1545ms
+ ✓ Compiled in 438ms (802 modules)
+ ✓ Compiled in 641ms (802 modules)
+ GET /admin/products 200 in 2213ms
+ GET /admin/products 200 in 2160ms
+ GET / 200 in 1205ms
+ ○ Compiling /register ...
+ GET / 200 in 2087ms
+ GET /admin/products 200 in 3959ms
+ ✓ Compiled /register in 2.5s (2052 modules)
+ GET /admin/products 200 in 4507ms
+ GET /register 200 in 2930ms
+ GET /admin/products 200 in 4179ms
+ GET /register 200 in 128ms
+ GET /admin/products 200 in 3932ms
+ GET /admin/products 200 in 1159ms
+ GET /admin/products 200 in 1073ms
+ GET /admin/products 200 in 1050ms
+ GET /admin/products 200 in 1035ms
+ GET /admin/products 200 in 1357ms
+ ✓ Compiled in 439ms (802 modules)
+ ✓ Compiled in 540ms (802 modules)
+ GET /register 200 in 564ms
+ GET /register 200 in 219ms
+ GET /admin/products 200 in 2019ms
+ GET /admin/products 200 in 2021ms
+ GET /admin/products 200 in 1965ms
+ GET /admin/products 200 in 1919ms
+ GET /admin/products 200 in 1769ms
+ GET /admin/products 200 in 1005ms
+ GET /admin/products 200 in 919ms
+ GET /admin/products 200 in 897ms
+ GET /admin/products 200 in 958ms
+ GET /admin/products 200 in 970ms
+ GET /admin/products 200 in 984ms
+ GET /admin/products 200 in 1078ms
+ GET /admin/products 200 in 1112ms
+ GET /admin/products 200 in 1165ms
+ GET /admin/products 200 in 1145ms
+ GET /admin/products 200 in 1158ms
+ GET /admin/products 200 in 2041ms
+ GET /admin/products 200 in 4643ms
+ GET /admin/products 200 in 5929ms
+ ✓ Compiled in 5.5s (2052 modules)
+ GET /admin/products 200 in 6259ms
+ GET /register 200 in 459ms
+ GET /admin/products 200 in 6324ms
+ ✓ Compiled in 546ms (802 modules)
+ ✓ Compiled in 620ms (802 modules)
+ GET / 200 in 1385ms
+ GET / 200 in 593ms
+ GET / 200 in 461ms
+ GET /admin/products 200 in 7841ms
+ GET /admin/products 200 in 2271ms
+ GET /admin/products 200 in 2168ms
+ GET /admin/products 200 in 1923ms
+ GET /admin/products 200 in 1302ms
+ GET /admin/products 200 in 1328ms
+ GET /admin/products 200 in 1371ms
+ GET /admin/products 200 in 1292ms
+ GET /admin/products 200 in 1210ms
+ GET /admin/products 200 in 1125ms
+ GET /admin/products 200 in 1054ms
+ GET /admin/products 200 in 934ms
+ ✓ Compiled in 325ms (802 modules)
+ GET /admin/products 200 in 1342ms
+ ✓ Compiled in 374ms (802 modules)
+ GET /admin/products 200 in 1663ms
+ GET /admin/products 200 in 1763ms
+ GET / 200 in 789ms
+ GET / 200 in 558ms
+ GET /admin/products 200 in 1787ms
+ GET /admin/products 200 in 1799ms
+ GET /admin/products 200 in 1781ms
+ GET /admin/products 200 in 1337ms
+ GET /admin/products 200 in 842ms
+ GET /admin/products 200 in 657ms
+ GET /admin/products 200 in 486ms
+ GET /admin/products 200 in 294ms
+ GET /manifest.webmanifest 200 in 55ms
+ ✓ Compiled in 327ms (802 modules)
+ ✓ Compiled in 428ms (802 modules)
+ ✓ Compiled in 1323ms (802 modules)
+ GET / 200 in 2280ms
+ GET / 200 in 1855ms
+ GET / 200 in 493ms
+ GET /admin/products 200 in 2667ms
+ GET /admin/products 200 in 1924ms
+ GET /admin/products 200 in 367ms
+ GET /manifest.webmanifest 200 in 133ms
+ ✓ Compiled in 408ms (802 modules)
+ GET / 200 in 351ms
+ GET /admin/products 200 in 418ms
+ GET /manifest.webmanifest 200 in 23ms
+ ✓ Compiled in 335ms (802 modules)
+ GET / 200 in 340ms
+ GET /admin/products 200 in 379ms
+ GET /manifest.webmanifest 200 in 21ms
+ GET / 200 in 515ms
+ ✓ Compiled in 716ms (802 modules)
+ ✓ Compiled in 949ms (802 modules)
+ GET /manifest.webmanifest 200 in 427ms
+ ✓ Compiled in 761ms (802 modules)
+ ✓ Compiled in 656ms (802 modules)
+ GET / 200 in 2434ms
+ GET / 200 in 2546ms
+ GET / 200 in 2039ms
+ ✓ Compiled in 923ms (802 modules)
+ GET / 200 in 1993ms
+ ✓ Compiled in 525ms (802 modules)
+ GET / 200 in 1803ms
+ GET / 200 in 670ms
+ GET / 200 in 175ms
+ GET /admin/products 200 in 4349ms
+ GET /admin/products 200 in 3225ms
+ GET /admin/products 200 in 2216ms
+ GET /admin/products 200 in 1791ms
+ GET /favicon.ico 200 in 366ms
+ ✓ Compiled in 432ms (802 modules)
+ ✓ Compiled in 651ms (802 modules)
+ ✓ Compiled in 797ms (802 modules)
+ ✓ Compiled in 1628ms (802 modules)
+ GET /manifest.webmanifest 200 in 741ms
+ GET / 200 in 3158ms
+ ✓ Compiled in 601ms (802 modules)
+ GET / 200 in 3087ms
+ GET / 200 in 2412ms
+ GET / 200 in 2556ms
+ GET / 200 in 799ms
+ GET / 200 in 178ms
+ ✓ Compiled in 418ms (802 modules)
+ ✓ Compiled in 472ms (802 modules)
+ ✓ Compiled in 432ms (802 modules)
+ GET / 200 in 1004ms
+ GET / 200 in 552ms
+ GET / 200 in 114ms
+ ✓ Compiled in 670ms (802 modules)
+ ✓ Compiled in 1047ms (802 modules)
+ GET / 200 in 550ms
+ GET / 200 in 1607ms
+ ✓ Compiled in 913ms (802 modules)
+ ✓ Compiled in 604ms (802 modules)
+ GET / 200 in 2637ms
+ GET / 200 in 1721ms
+ GET / 200 in 845ms
+ GET / 200 in 219ms
+ ✓ Compiled in 309ms (802 modules)
+ ✓ Compiled in 387ms (802 modules)
+ ✓ Compiled in 393ms (802 modules)
+ GET / 200 in 903ms
+ GET / 200 in 512ms
+ GET / 200 in 113ms
+ ✓ Compiled in 301ms (802 modules)
+ GET / 200 in 100ms
+ ✓ Compiled in 283ms (802 modules)
+ ✓ Compiled in 380ms (802 modules)
+ ✓ Compiled in 391ms (802 modules)
+ GET / 200 in 895ms
+ GET / 200 in 507ms
+ GET / 200 in 110ms
+ ✓ Compiled in 371ms (802 modules)
+ ✓ Compiled in 670ms (802 modules)
+ GET / 200 in 591ms
+ GET / 200 in 88ms
+ ✓ Compiled in 337ms (802 modules)
+ GET / 200 in 135ms
+ ✓ Compiled in 417ms (802 modules)
+ GET / 200 in 116ms
+ ✓ Compiled in 318ms (802 modules)
+ ✓ Compiled in 405ms (802 modules)
+ ✓ Compiled in 387ms (802 modules)
+ GET / 200 in 944ms
+ GET / 200 in 534ms
+ GET / 200 in 138ms
+ ✓ Compiled in 317ms (802 modules)
+ GET / 200 in 94ms
+ ✓ Compiled in 290ms (802 modules)
+ ✓ Compiled in 378ms (802 modules)
+ ✓ Compiled in 397ms (802 modules)
+ GET / 200 in 903ms
+ GET / 200 in 516ms
+ GET / 200 in 116ms
+ ✓ Compiled in 361ms (802 modules)
+ GET / 200 in 92ms
+ ✓ Compiled in 322ms (802 modules)
+ ✓ Compiled in 364ms (802 modules)
+ ✓ Compiled in 388ms (802 modules)
+ GET / 200 in 893ms
+ GET / 200 in 522ms
+ GET / 200 in 128ms
+ ✓ Compiled in 320ms (802 modules)
+ GET / 200 in 87ms
+ ✓ Compiled in 330ms (802 modules)
+ GET / 200 in 90ms
+ ✓ Compiled in 310ms (802 modules)
+ GET / 200 in 87ms
+ GET / 200 in 371ms
+ GET /manifest.webmanifest 200 in 265ms
+ GET /favicon.ico 200 in 24ms
+ ✓ Compiled in 388ms (802 modules)
+ ✓ Compiled in 480ms (802 modules)
+ GET / 200 in 725ms
+ GET / 200 in 656ms
+ GET / 200 in 218ms
+ GET / 200 in 158ms
+ ✓ Compiled in 327ms (802 modules)
+ ✓ Compiled in 401ms (802 modules)
+ GET / 200 in 658ms
+ GET / 200 in 432ms
+ GET / 200 in 262ms
+ GET / 200 in 129ms
+ ✓ Compiled in 578ms (802 modules)
+ ✓ Compiled in 418ms (802 modules)
+ GET / 200 in 542ms
+ GET / 200 in 119ms
+ GET / 200 in 210ms
+ GET / 200 in 190ms
+ ✓ Compiled in 405ms (802 modules)
+ ✓ Compiled in 415ms (802 modules)
+ ✓ Compiled in 453ms (802 modules)
+ GET / 200 in 1114ms
+ ○ Compiling /admin ...
+ GET / 200 in 2059ms
+ ✓ Compiled /admin in 1828ms (1247 modules)
+ GET /admin 200 in 2707ms
+ GET / 200 in 2692ms
+ GET / 200 in 111ms
+ ○ Compiling /apple-icon.png ...
+ ✓ Compiled /apple-icon.png in 1628ms (1249 modules)
+ GET /apple-icon.png 200 in 1716ms
+ ✓ Compiled in 422ms (802 modules)
+ GET / 200 in 220ms
+ ✓ Compiled in 698ms (802 modules)
+ GET / 200 in 97ms
+ ✓ Compiled in 382ms (802 modules)
+ ✓ Compiled in 464ms (802 modules)
+ ✓ Compiled in 465ms (802 modules)
+ GET / 200 in 1054ms
+ GET / 200 in 583ms
+ GET / 200 in 113ms
+ ✓ Compiled /admin/[section] in 396ms (1251 modules)
+ GET /admin/categories 200 in 685ms
+ GET / 200 in 270ms
+ GET / 200 in 61ms
+ GET /apple-icon.png 200 in 24ms
+ ✓ Compiled in 382ms (802 modules)
+ GET / 200 in 94ms
+ ✓ Compiled in 564ms (802 modules)
+ ✓ Compiled in 596ms (802 modules)
+ GET / 200 in 748ms
+ GET / 200 in 141ms
+ ✓ Compiled in 457ms (802 modules)
+ GET / 200 in 143ms
+ ✓ Compiled in 738ms (802 modules)
+ GET / 200 in 126ms
+ ✓ Compiled in 520ms (802 modules)
+ ✓ Compiled in 626ms (802 modules)
+ GET / 200 in 749ms
+ GET / 200 in 118ms
+ ✓ Compiled in 399ms (802 modules)
+ ✓ Compiled in 517ms (802 modules)
+ ✓ Compiled in 1362ms (802 modules)
+ GET / 200 in 2044ms
+ GET / 200 in 1506ms
+ GET / 200 in 150ms
+ ✓ Compiled in 541ms (802 modules)
+ GET / 200 in 137ms
+ ✓ Compiled in 465ms (802 modules)
+ ✓ Compiled in 451ms (802 modules)
+ GET / 200 in 557ms
+ GET / 200 in 98ms
+ GET / 200 in 61ms
+ GET /favicon.ico 200 in 22ms
+ GET /favicon.ico 200 in 15ms
+ ✓ Compiled in 367ms (802 modules)
+ ✓ Compiled in 910ms (802 modules)
+ ✓ Compiled in 635ms (802 modules)
+ GET / 200 in 2052ms
+ ✓ Compiled in 468ms (802 modules)
+ GET / 200 in 1615ms
+ ✓ Compiled in 485ms (802 modules)
+ GET / 200 in 1112ms
+ GET / 200 in 637ms
+ GET / 200 in 139ms
+ ✓ Compiled in 454ms (802 modules)
+ GET / 200 in 106ms
+ ✓ Compiled in 398ms (802 modules)
+ GET / 200 in 115ms
+ ✓ Compiled in 380ms (802 modules)
+ ✓ Compiled in 501ms (802 modules)
+ GET / 200 in 630ms
+ GET / 200 in 122ms
+ ✓ Compiled in 424ms (802 modules)
+ GET / 200 in 119ms
+ ✓ Compiled in 468ms (802 modules)
+ ✓ Compiled in 485ms (802 modules)
+ GET / 200 in 593ms
+ GET / 200 in 99ms
+ ✓ Compiled in 474ms (802 modules)
+ GET / 200 in 98ms
+ ✓ Compiled in 369ms (802 modules)
+ ✓ Compiled in 448ms (802 modules)
+ ✓ Compiled in 456ms (802 modules)
+ GET / 200 in 1021ms
+ GET / 200 in 575ms
+ GET / 200 in 116ms
+ ✓ Compiled in 367ms (802 modules)
+ ✓ Compiled in 1042ms (802 modules)
+ GET / 200 in 1153ms
+ GET / 200 in 110ms
+ ✓ Compiled in 401ms (802 modules)
+ GET / 200 in 96ms
+ ✓ Compiled in 374ms (802 modules)
+ ✓ Compiled in 449ms (802 modules)
+ GET / 200 in 563ms
+ GET / 200 in 107ms
+ ✓ Compiled in 435ms (802 modules)
+ GET / 200 in 136ms
+ GET / 200 in 138ms
+ GET / 200 in 245ms
+ GET / 200 in 157ms
+ GET /manifest.webmanifest 200 in 42ms
+ GET / 200 in 327ms
+ GET / 200 in 282ms
+ GET / 200 in 280ms
+ GET / 200 in 298ms
+ GET / 200 in 343ms
+ GET / 200 in 362ms
+ GET / 200 in 361ms
+ GET / 200 in 237ms
+ GET / 200 in 127ms
+ GET / 200 in 251ms
+ GET / 200 in 253ms
+ GET / 200 in 265ms
+ GET / 200 in 272ms
+ ○ Compiling /wishlist ...
+ GET / 200 in 935ms
+ GET / 200 in 1543ms
+ ✓ Compiled /account in 2.6s (1246 modules)
+ ✓ Compiled in 1ms (1255 modules)
+ ✓ Compiled in 0ms (1255 modules)
+ ✓ Compiled in 0ms (1255 modules)
+ GET /wishlist 200 in 5473ms
+ ✓ Compiled in 673ms (802 modules)
+ GET /account 200 in 5023ms
+ GET /account 200 in 164ms
+ GET / 200 in 3995ms
+ GET / 200 in 236ms
+ GET /account 200 in 112ms
+ GET /account 200 in 109ms
+ GET /account 200 in 75ms
+ GET /account 200 in 71ms
+ GET /account 200 in 79ms
+ GET /account 200 in 72ms
+ GET /account 200 in 83ms
+ GET /account 200 in 73ms
+ GET /account 200 in 80ms
+ GET /account 200 in 64ms
+ GET /account 200 in 72ms
+ GET /account 200 in 64ms
+ GET /account 200 in 68ms
+ GET /account 200 in 67ms
+ GET /account 200 in 112ms
+ GET /account 200 in 59ms
+ GET /manifest.webmanifest 200 in 33ms
+ GET /account 200 in 108ms
+ GET /account 200 in 60ms
+ GET /account 200 in 67ms
+ GET /account 200 in 65ms
+ GET /account 200 in 58ms
+ GET /account 200 in 66ms
+ GET /account 200 in 61ms
+ GET /account 200 in 70ms
+ GET /account 200 in 60ms
+ GET /account 200 in 61ms
+ GET /account 200 in 54ms
+ GET /account 200 in 59ms
+ GET /account 200 in 56ms
+ GET /account 200 in 62ms
+ GET /account 200 in 55ms
+ GET /account 200 in 73ms
+ GET /account 200 in 72ms
+ GET /account 200 in 73ms
+ GET /account 200 in 78ms
+ GET /account 200 in 82ms
+ GET /account 200 in 70ms
+ GET /account 200 in 66ms
+ GET /account 200 in 61ms
+ GET /account 200 in 60ms
+ GET /account 200 in 54ms
+ GET /account 200 in 72ms
+ GET /account 200 in 65ms
+ GET /account 200 in 74ms
+ GET /account 200 in 59ms
+ GET /account 200 in 80ms
+ GET /account 200 in 65ms
+ GET /account 200 in 63ms
+ GET /account 200 in 55ms
+ GET /account 200 in 62ms
+ GET /account 200 in 54ms
+ GET /account 200 in 60ms
+ GET /account 200 in 64ms
+ GET /account 200 in 70ms
+ GET /account 200 in 60ms
+ GET /account 200 in 67ms
+ GET /account 200 in 57ms
+ GET /account 200 in 62ms
+ GET /cart 200 in 65ms
+ GET /account 200 in 114ms
+ GET /cart 200 in 66ms
+ GET /cart 200 in 171ms
+ GET /manifest.webmanifest 200 in 66ms
+ GET /cart 200 in 140ms
+ GET /cart 200 in 80ms
+ GET /cart 200 in 60ms
+ GET /cart 200 in 74ms
+ GET /cart 200 in 67ms
+ GET /cart 200 in 75ms
+ GET /cart 200 in 68ms
+ GET /cart 200 in 72ms
+ GET /cart 200 in 56ms
+ GET /cart 200 in 64ms
+ GET /cart 200 in 59ms
+ GET /cart 200 in 64ms
+ GET /cart 200 in 59ms
+ GET /cart 200 in 68ms
+ GET /cart 200 in 56ms
+ GET /account 200 in 45ms
+ GET /manifest.webmanifest 200 in 14ms
+ GET /account 200 in 35ms
+ GET /manifest.webmanifest 200 in 14ms
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 623ms (1252 modules)
+ GET /admin 200 in 1188ms
+ GET /manifest.webmanifest 200 in 18ms
+ ✓ Compiled /admin/[section] in 412ms (1254 modules)
+ GET /admin/inventory 200 in 595ms
+ GET /manifest.webmanifest 200 in 18ms
+ GET / 200 in 81ms
+ GET /manifest.webmanifest 200 in 39ms

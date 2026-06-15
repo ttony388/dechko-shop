@@ -1,0 +1,16 @@
+ ⨯ [Error: Cannot find module './5611.js'
+Require stack:
+- F:\dechko-shop\.next\server\webpack-runtime.js
+- F:\dechko-shop\.next\server\pages\_document.js
+- F:\dechko-shop\node_modules\next\dist\server\require.js
+- F:\dechko-shop\node_modules\next\dist\server\load-components.js
+- F:\dechko-shop\node_modules\next\dist\build\utils.js
+- F:\dechko-shop\node_modules\next\dist\build\swc\options.js
+- F:\dechko-shop\node_modules\next\dist\build\swc\index.js
+- F:\dechko-shop\node_modules\next\dist\build\next-config-ts\transpile-config.js
+- F:\dechko-shop\node_modules\next\dist\server\config.js
+- F:\dechko-shop\node_modules\next\dist\cli\next-test.js
+- F:\dechko-shop\node_modules\next\dist\bin\next] {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}

@@ -1,0 +1,10 @@
+
+> dechko-shop@0.1.0 start
+> next start --port 3020
+
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3020
+   - Network:      http://172.25.160.1:3020
+
+ ✓ Starting...
+ ✓ Ready in 816ms

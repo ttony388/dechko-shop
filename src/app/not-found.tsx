@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function NotFound() { return <div className="container-shell flex min-h-[68vh] flex-col items-center justify-center py-20 text-center"><p className="text-8xl font-black text-turquoise">404</p><h1 className="mt-3 text-4xl font-black">Тази страница си играе на криеница.</h1><p className="mt-4 font-semibold text-ink/55">Не успяхме да я намерим.</p><Link href="/" className="mt-8 rounded-full bg-ink px-8 py-4 font-black text-white">Към началото</Link></div>; }

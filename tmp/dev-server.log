@@ -1,0 +1,224 @@
+
+> dechko-shop@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3000
+   - Network:      http://172.25.160.1:3000
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 2.2s
+ ○ Compiling / ...
+ ✓ Compiled / in 6s (1580 modules)
+ GET / 200 in 2839ms
+ ✓ Compiled in 1204ms (690 modules)
+ GET / 200 in 836ms
+ ✓ Compiled in 992ms (690 modules)
+ ✓ Compiled in 208ms (690 modules)
+ GET / 200 in 405ms
+ ○ Compiling /manifest.webmanifest ...
+ ✓ Compiled /favicon.ico in 859ms (1581 modules)
+ GET /favicon.ico 200 in 487ms
+ GET /manifest.webmanifest 200 in 1047ms
+ ○ Compiling /admin/products ...
+ ✓ Compiled /admin/products in 1803ms (1809 modules)
+ GET /admin/products 307 in 2693ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 1119ms (1992 modules)
+ GET /login 200 in 1574ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 746ms (1979 modules)
+ GET /api/auth/providers 200 in 2040ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 3.1s (2312 modules)
+ GET /api/auth/csrf 200 in 2034ms
+ POST /api/auth/callback/credentials? 200 in 75ms
+ GET /login 500 in 3552ms
+ GET /login 200 in 139ms
+ GET /login 200 in 50ms
+ GET /login 200 in 47ms
+ GET /login 200 in 437ms
+ GET /api/auth/providers 200 in 27ms
+ GET /api/auth/csrf 200 in 16ms
+ POST /api/auth/callback/credentials? 200 in 301ms
+ ○ Compiling /account ...
+ ✓ Compiled /account in 1045ms (2339 modules)
+ GET /account 200 in 1225ms
+ GET /account 200 in 66ms
+ ✓ Compiled /manifest.webmanifest in 221ms (1405 modules)
+ GET /manifest.webmanifest 200 in 383ms
+ ○ Compiling /account/profile ...
+ ✓ Compiled /account/profile in 683ms (2347 modules)
+ GET /account/profile 200 in 855ms
+ GET /account/profile 200 in 55ms
+ GET /manifest.webmanifest 200 in 31ms
+ GET / 200 in 121ms
+ GET /manifest.webmanifest 200 in 23ms
+ ○ Compiling /shop ...
+ ✓ Compiled /shop in 1030ms (2361 modules)
+ GET /shop 200 in 1173ms
+ GET /shop 200 in 61ms
+ GET /manifest.webmanifest 200 in 73ms
+ GET / 200 in 70ms
+ GET /manifest.webmanifest 200 in 18ms
+ GET / 200 in 651ms
+ ✓ Compiled /admin/products in 425ms (1342 modules)
+ GET /manifest.webmanifest 200 in 32ms
+ GET /admin/products 200 in 1635ms
+ ○ Compiling /admin/products/new ...
+ ✓ Compiled /admin/products/new in 911ms (2300 modules)
+ GET /admin/products/new 200 in 1165ms
+ GET /admin/products/new 200 in 92ms
+ GET /manifest.webmanifest 200 in 24ms
+ GET / 200 in 100ms
+ GET /manifest.webmanifest 200 in 24ms
+ GET / 200 in 384ms
+ ○ Compiling /apple-icon.png ...
+ ✓ Compiled /apple-icon.png in 631ms (1252 modules)
+ GET /apple-icon.png 200 in 794ms
+ ○ Compiling /category/[slug] ...
+ ✓ Compiled /category/[slug] in 672ms (2202 modules)
+ GET / 200 in 328ms
+ ✓ Compiled /manifest.webmanifest in 408ms (1260 modules)
+ GET /manifest.webmanifest 200 in 580ms
+ GET /category/baby 200 in 1763ms
+ GET /category/baby 200 in 140ms
+ GET /category/baby 200 in 60ms
+ GET /manifest.webmanifest 200 in 15ms
+ GET /apple-icon.png 200 in 23ms
+ ○ Compiling /wishlist ...
+ ✓ Compiled /wishlist in 1658ms (2198 modules)
+ GET /wishlist 200 in 2108ms
+ GET /wishlist 200 in 133ms
+ GET / 200 in 472ms
+ ○ Compiling /manifest.webmanifest ...
+ ✓ Compiled /manifest.webmanifest in 579ms (1256 modules)
+ GET /manifest.webmanifest 200 in 753ms
+ ○ Compiling /product/[slug] ...
+ ✓ Compiled /product/[slug] in 1994ms (2225 modules)
+ GET / 200 in 251ms
+ GET /manifest.webmanifest 200 in 40ms
+ GET /product/product-8-toys 200 in 2986ms
+ GET /product/product-8-toys 200 in 93ms
+ GET /product/product-8-toys 200 in 81ms
+ ○ Compiling /apple-icon.png ...
+ ✓ Compiled /apple-icon.png in 574ms (1272 modules)
+ GET /apple-icon.png 200 in 700ms
+ ○ Compiling /cart ...
+ ✓ Compiled /cart in 771ms (2229 modules)
+ GET /cart 200 in 985ms
+ GET / 200 in 279ms
+ GET /cart 200 in 45ms
+ GET /manifest.webmanifest 200 in 22ms
+ GET /apple-icon.png 200 in 20ms
+ ○ Compiling /checkout ...
+ ✓ Compiled /checkout in 673ms (2317 modules)
+ GET /checkout 200 in 793ms
+ GET / 200 in 189ms
+ GET /checkout 200 in 48ms
+ GET /manifest.webmanifest 200 in 33ms
+ GET /apple-icon.png 200 in 18ms
+ ✓ Compiled in 883ms (965 modules)
+ ✓ Compiled in 327ms (965 modules)
+ GET / 200 in 493ms
+ GET / 200 in 155ms
+ GET /manifest.webmanifest 200 in 26ms
+ ✓ Compiled in 2.6s (2290 modules)
+ ✓ Compiled in 786ms (968 modules)
+ GET / 200 in 898ms
+ GET / 200 in 95ms
+ ✓ Compiled /manifest.webmanifest in 347ms (1331 modules)
+ GET /manifest.webmanifest 200 in 540ms
+ GET /category/gifts 200 in 223ms
+ GET /manifest.webmanifest 200 in 26ms
+ GET / 200 in 74ms
+ GET /manifest.webmanifest 200 in 38ms
+ GET /category/baby 200 in 68ms
+ GET /manifest.webmanifest 200 in 23ms
+ GET /category/books 200 in 62ms
+ GET /manifest.webmanifest 200 in 18ms
+ ○ Compiling /wishlist ...
+ ✓ Compiled /wishlist in 1183ms (1338 modules)
+ GET /wishlist 200 in 1484ms
+ GET /wishlist 200 in 94ms
+ GET /manifest.webmanifest 200 in 34ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 635ms (1340 modules)
+ GET /api/auth/csrf 200 in 732ms
+ POST /api/auth/signout 200 in 28ms
+ GET / 200 in 577ms
+ GET /manifest.webmanifest 200 in 40ms
+ ○ Compiling /register ...
+ ✓ Compiled /register in 1815ms (2301 modules)
+ GET /register 200 in 2065ms
+ GET /manifest.webmanifest 200 in 25ms
+ ✓ Compiled /login in 400ms (1336 modules)
+ GET /login 200 in 543ms
+ GET /login 200 in 63ms
+ GET /manifest.webmanifest 200 in 28ms
+ GET /api/auth/providers 200 in 37ms
+ GET /api/auth/csrf 200 in 22ms
+ POST /api/auth/callback/credentials? 200 in 398ms
+ ✓ Compiled /account in 430ms (1340 modules)
+ GET /account 200 in 600ms
+ GET /account 200 in 74ms
+ GET /manifest.webmanifest 200 in 23ms
+ GET /checkout 200 in 334ms
+ ○ Compiling /apple-icon.png ...
+ ✓ Compiled /apple-icon.png in 578ms (1342 modules)
+ GET /apple-icon.png 200 in 628ms
+ ✓ Compiled in 2.2s (2294 modules)
+ GET /account 200 in 335ms
+ GET /checkout 200 in 101ms
+ GET /manifest.webmanifest 200 in 47ms
+ GET /apple-icon.png 200 in 54ms
+ ✓ Compiled in 346ms (968 modules)
+ GET /checkout 200 in 174ms
+ GET /account 200 in 197ms
+ GET /manifest.webmanifest 200 in 27ms
+ GET /login 200 in 57ms
+ GET /apple-icon.png 200 in 17ms
+ GET /api/auth/providers 200 in 33ms
+ GET /api/auth/csrf 200 in 17ms
+ POST /api/auth/callback/credentials? 200 in 321ms
+ GET /account 200 in 43ms
+ GET /account 200 in 62ms
+ GET /apple-icon.png 200 in 15ms
+ GET /account 200 in 35ms
+ GET /account 200 in 42ms
+ GET /account 200 in 44ms
+ GET /account 200 in 37ms
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 1739ms (2296 modules)
+ GET /account 200 in 282ms
+ GET /admin 200 in 2089ms
+ GET /admin 200 in 123ms
+ GET / 200 in 119ms
+ GET /apple-icon.png 200 in 19ms
+ ○ Compiling /api/register ...
+ ✓ Compiled /api/register in 769ms (2298 modules)
+ POST /api/register 201 in 1300ms
+ POST /api/register 409 in 14ms
+ GET /api/auth/csrf 200 in 39ms
+ POST /api/auth/callback/credentials 302 in 331ms
+ GET /account 200 in 363ms
+ GET /api/auth/session 200 in 29ms
+ ○ Compiling /account/addresses ...
+ ✓ Compiled /account/addresses in 1223ms (2299 modules)
+ GET /account/addresses 200 in 1532ms
+ GET /account/addresses 200 in 56ms
+ ✓ Compiled /manifest.webmanifest in 444ms (1348 modules)
+ GET /manifest.webmanifest 200 in 624ms
+ ○ Compiling /wishlist ...
+ ✓ Compiled /wishlist in 1409ms (1355 modules)
+ GET /wishlist 200 in 1617ms
+ GET /wishlist 200 in 203ms
+ GET / 200 in 205ms
+ GET /manifest.webmanifest 200 in 78ms
+ ○ Compiling /product/[slug] ...
+ ✓ Compiled /product/[slug] in 1139ms (1357 modules)
+ ✓ Compiled (1371 modules)
+ GET /favicon.ico 200 in 1849ms
+ GET /favicon.ico 200 in 72ms
+[?25h
