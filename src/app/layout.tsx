@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { auth } from "@/auth";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
@@ -68,6 +69,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           <main>{children}</main>
         </Providers>
         <Footer />
+        <SpeedInsights />
       </body>
     </html>
   );
